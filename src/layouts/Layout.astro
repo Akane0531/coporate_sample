@@ -24,7 +24,7 @@ import Header from '../components/Header.astro';
     <title>{title}</title>
   </head>
   <body>
-    <h1 transition:name='title'>{title}</h1>
+    <h1 transition:name='title' transition:animate='slide'>{title}</h1>
     <Header />
     <slot />
     <Footer />

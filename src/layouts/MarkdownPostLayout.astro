@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fade } from 'astro:transitions';
 const { frontmatter } = Astro.props;
 
 const stringToHash = (string: string): string => {
@@ -17,8 +18,8 @@ const stringToHash = (string: string): string => {
 <Layout title={frontmatter.title}>
   <h2 transition:name={'title-' + stringToHash(frontmatter.title)}>{frontmatter.title}</h2>
   <p>投稿日: {frontmatter.pubDate.toString().slice(0, 10)}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>著者: {frontmatter.author}</p>
+  <p transition:animate={fade({ duration: '2s' })}><em>{frontmatter.description}</em></p>
+  <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
   <img src={frontmatter.image.url} width='300' alt={frontmatter.image.alt} transition:name={'img-' + stringToHash(frontmatter.title)} />
   <div class='tags'>
     {
