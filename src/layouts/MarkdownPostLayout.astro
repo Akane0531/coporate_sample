@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+const { frontmatter } = Astro.props;
+
+const stringToHash = (string: string): string => {
+  let hash = 0;
+  if (string.length == 0) return hash.toString();
+  for (let i = 0; i < string.length; i++) {
+    let char = string.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16); // Convert to absolute value and convert to hexadecimal string
+};
+---
+
+<Layout title={frontmatter.title}>
+  <h2 transition:name={'title-' + stringToHash(frontmatter.title)}>{frontmatter.title}</h2>
+  <p>投稿日: {frontmatter.pubDate.toString().slice(0, 10)}</p>
+  <p><em>{frontmatter.description}</em></p>
+  <p>著者: {frontmatter.author}</p>
+  <img src={frontmatter.image.url} width='300' alt={frontmatter.image.alt} transition:name={'img-' + stringToHash(frontmatter.title)} />
+  <div class='tags'>
+    {
+      frontmatter.tags.map((tag: string) => (
+        <p class='tag'>
+          <a href={`/tags/${tag}`}>{tag}</a>
+        </p>
+      ))
+    }
+  </div>
+  <slot />
+</Layout>
+
+<style>
+  a {
+    color: #00539f;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    font-size: 1.15em;
+    background-color: #f8fcfd;
+  }
+</style>
