@@ -1,19 +1,9 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro'; //NOTE ルートから参照できる？
-const allPosts = await Astro.glob('../../pages/posts/*.md');
-console.log('🚀 ~ allPosts:', allPosts[0].rawContent);
+import BlogPost from '../../components/BlogPost.astro';
+const allPosts = await getCollection('posts');
 const pageTitle = '私のAstro学習ブログ';
-
-const stringToHash = (string: string): string => {
-  let hash = 0;
-  if (string.length == 0) return hash.toString();
-  for (let i = 0; i < string.length; i++) {
-    let char = string.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash).toString(16); // Convert to absolute value and convert to hexadecimal string
-};
 ---
 
 <Layout title={pageTitle}>
@@ -21,25 +11,12 @@ const stringToHash = (string: string): string => {
     <h1>BLOG</h1>
     <ul>
       {
-        allPosts.map((post) => (
+        allPosts.map((post: { slug: any; data: { title: string; image: any } }) => (
           <li>
-            <a href={post.url}>
-              <img src={post.frontmatter.image.url} transition:name={'img-' + stringToHash(post.frontmatter.title)} />
-            </a>
-            <h3>
-              <a href={post.url} transition:name={'title-' + stringToHash(post.frontmatter.title)}>
-                {post.frontmatter.title}
-              </a>
-            </h3>
+            <BlogPost url={`/posts/${post.slug}/`} data={post.data} />
           </li>
         ))
       }
     </ul>
   </main>
 </Layout>
-
-<style>
-  img {
-    max-width: 100%;
-  }
-</style>

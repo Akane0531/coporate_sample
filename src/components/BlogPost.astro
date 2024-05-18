@@ -1,0 +1,35 @@
+---
+const {
+  url,
+  data: { title, image },
+} = Astro.props;
+
+const stringToHash = (string: string): string => {
+  let hash = 0;
+  if (string.length == 0) return hash.toString();
+  for (let i = 0; i < string.length; i++) {
+    let char = string.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16); // Convert to absolute value and convert to hexadecimal string
+};
+---
+
+<div>
+  <a href={url}>{title}</a>
+  <a href={url}>
+    <img src={image.url} transition:name={'img-' + stringToHash(title)} />
+  </a>
+  <h3>
+    <a href={url} transition:name={'title-' + stringToHash(title)}>
+      {title}
+    </a>
+  </h3>
+</div>
+
+<style>
+  img {
+    max-width: 100%;
+  }
+</style>
