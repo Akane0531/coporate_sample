@@ -1,13 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import BaseLayout from '@/layouts/BaseLayout';
 const pageTitle = 'tags';
 
 const allPosts = await getCollection('posts');
 const tags = [...new Set(allPosts.map((post: { data: { tags: any; }; }) => post.data.tags).flat())];
 ---
 
-<Layout title={pageTitle}>
+<BaseLayout title={pageTitle}>
   <main>
     <div class='tags'>
       {
@@ -19,7 +19,7 @@ const tags = [...new Set(allPosts.map((post: { data: { tags: any; }; }) => post.
       }
     </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   a {

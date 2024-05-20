@@ -1,6 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro'; //NOTE ルートから参照できる？
-
+import BaseLayout from '@/layouts/BaseLayout';
 const pageTitle = '私について';
 const identity = {
   firstName: 'サラ',
@@ -19,7 +18,7 @@ const fontWeight = 'bold';
 const textCase = 'uppercase';
 ---
 
-<Layout title='Welcome to Astro.'>
+<BaseLayout title='Welcome to Astro.'>
   <main>
     <h1>{pageTitle}</h1>
     <h1>私のAstroサイト</h1>
@@ -52,7 +51,7 @@ const textCase = 'uppercase';
 
     {goal === 3 ? <p>My goal is to finish in 3 days. 3日で終えるのが目標です。</p> : <p>My goal is not 3 days. 3日が目標ではありません。</p>}
   </main>
-</Layout>
+</BaseLayout>
 
 <style define:vars={{ skillColor, fontWeight, textCase }}>
   .skill {
