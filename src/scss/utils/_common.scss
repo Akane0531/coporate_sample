@@ -1,0 +1,6 @@
+@use '../variables/_index' as *;
+@use '../base/_index' as *;
+
+.wrap {
+  @include wrap();
+}

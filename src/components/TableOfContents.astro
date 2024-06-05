@@ -1,0 +1,133 @@
+---
+import TableOfContentsHeading from '@/components/TabletOfContentsHeading.astro';
+
+type TableOfContent = {
+  depth: number;
+  text: string;
+  slug: string;
+  subheadings: TableOfContent[];
+};
+
+const { headings } = Astro.props;
+
+const toc = buildToc(headings);
+function buildToc(headings: TableOfContent[]) {
+  let toc: TableOfContent[] = [];
+  let parentHeadings = new Map();
+  headings.forEach((h) => {
+    let heading = { ...h, subheadings: [] };
+    parentHeadings.set(heading.depth, heading);
+    // Change 2 to 1 if your markdown includes your <h1>
+    if (heading.depth === 1 || heading.depth === 2) {
+      toc.push(heading);
+    } else {
+      parentHeadings.get(heading.depth - 1).subheadings.push(heading);
+    }
+  });
+  return toc;
+}
+---
+
+{
+  toc.length > 0 && (
+    <nav class='toc'>
+      <h2>目次</h2>
+      <ul>
+        {toc.map((heading) => (
+          <TableOfContentsHeading heading={heading} class='toc__list' />
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  .toc {
+    background-color: $bg;
+    padding: 40px 30px;
+    h2 {
+      @include font-size(18px);
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      &::before {
+        content: '';
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: bottom;
+        background-color: currentColor;
+        mask-size: contain;
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAxNSAxNSI+CiAgPHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMi4zNTU4NiAxLjA1NjNDMi43MTc1NS42OTkxOTIgMy4yMDY0LjUgMy43MTQ0NS41aDQuNzY5NDdjLjM1MTQ2IDAgLjYzNjM3LjI4NDkxLjYzNjM3LjYzNjM2IDAgLjM1MTQ2LS4yODQ5MS42MzYzNy0uNjM2MzcuNjM2MzdIMy43MTQ0NWMtLjE3NTcgMC0uMzQyNTkuMDY4OTktLjQ2NDM5LjE4OTI0LS4xMjE1Mi4xMTk5OC0uMTg4MjkuMjgwOTgtLjE4ODI5LjQ0NzEydi42MzYzNmguNjUyNjhjLjM1MTQ2IDAgLjYzNjM3LjI4NDkxLjYzNjM3LjYzNjM3IDAgLjM1MTQ1LS4yODQ5MS42MzYzNi0uNjM2MzcuNjM2MzZoLS42NTI2OHYxLjI3MjczaC42NTI2OGMuMzUxNDYgMCAuNjM2MzcuMjg0OTEuNjM2MzcuNjM2MzYgMCAuMzUxNDYtLjI4NDkxLjYzNjM3LS42MzYzNy42MzYzN2gtLjY1MjY4djEuMjcyNzJoLjY1MjY4Yy4zNTE0NiAwIC42MzYzNy4yODQ5MS42MzYzNy42MzYzNyAwIC4zNTE0NS0uMjg0OTEuNjM2MzYtLjYzNjM3LjYzNjM2aC0uNjUyNjh2MS4yNzI3MWguNjUyNjhjLjM1MTQ2IDAgLjYzNjM3LjI4NDkuNjM2MzcuNjM2NCAwIC4zNTE0LS4yODQ5MS42MzYzLS42MzYzNy42MzYzaC0uNjUyNjh2LjYzNjRjMCAuMTY2MS4wNjY3Ny4zMjcxLjE4ODI5LjQ0NzEuMTIxOC4xMjAzLjI4ODY5LjE4OTMuNDY0MzkuMTg5M2g3LjczNDI1Yy4xNzU3IDAgLjM0MjYtLjA2OS40NjQ0LS4xODkzLjEyMTUtLjEyLjE4ODMtLjI4MS4xODgzLS40NDcxVjcuODgxODJjMC0uMzUxNDYuMjg0OS0uNjM2MzcuNjM2NC0uNjM2MzcuMzUxNCAwIC42MzYzLjI4NDkxLjYzNjMuNjM2Mzd2NC43MDkwOGMwIC41MDktLjIwNDguOTk1NC0uNTY2OCAxLjM1MjgtLjM2MTcuMzU3MS0uODUwNS41NTYzLTEuMzU4Ni41NTYzSDMuNzE0NDVjLS41MDgwNSAwLS45OTY5LS4xOTkyLTEuMzU4NTktLjU1NjMtLjM2MTk2LS4zNTc0LS41NjY4MS0uODQzOC0uNTY2ODEtMS4zNTI4di0uNjM2NGgtLjY1MjY5Qy43ODQ5MSAxMS45NTQ1LjUgMTEuNjY5Ni41IDExLjMxODJjMC0uMzUxNS4yODQ5MS0uNjM2NC42MzYzNi0uNjM2NGguNjUyNjlWOS40MDkwOWgtLjY1MjY5Qy43ODQ5MSA5LjQwOTA5LjUgOS4xMjQxOC41IDguNzcyNzNjMC0uMzUxNDYuMjg0OTEtLjYzNjM3LjYzNjM2LS42MzYzN2guNjUyNjlWNi44NjM2NGgtLjY1MjY5Qy43ODQ5MSA2Ljg2MzY0LjUgNi41Nzg3My41IDYuMjI3MjdjMC0uMzUxNDUuMjg0OTEtLjYzNjM2LjYzNjM2LS42MzYzNmguNjUyNjlWNC4zMTgxOGgtLjY1MjY5Qy43ODQ5MSA0LjMxODE4LjUgNC4wMzMyNy41IDMuNjgxODJjMC0uMzUxNDYuMjg0OTEtLjYzNjM3LjYzNjM2LS42MzYzN2guNjUyNjl2LS42MzYzNmMwLS41MDg5Ni4yMDQ4NS0uOTk1NDEuNTY2ODEtMS4zNTI3OVptOS43NDIzNC45Njk0NEw4Ljc5OTQ2IDUuMjgyNzMgOC40NTg4MyA2LjYyOGwxLjM3ODM1LS4zNDAyMiAzLjI5OTkyLTMuMjU4MTVjLjA3Mi0uMTMxNDUuMTAyLS4yODEwMS4wODYtLjQyOTI0LS4wMTgxLS4xNjcyLS4wOTM3LS4zMjQ2NS0uMjE2Mi0uNDQ1NjEtLjEyMjctLjEyMTEyLS4yODUtLjE5ODIyLS40NjAzLS4yMTY2Ni0uMTU2LS4wMTY0LS4zMTI0LjAxNDY5LS40NDg0LjA4NzYyWk0xMS4zNjQ1Ljk4MTUzNGMuMzkwNS0uMjQ4ODc4Ljg1NDYtLjM1NzU5MSAxLjMxNTItLjMwOTE1OS40NjA2LjA0ODQzNi44OTE4LjI1MTM1MSAxLjIyMTQuNTc2NzM1LjMyOTcuMzI1NTMuNTM3Ny43NTQxLjU4NzQgMS4yMTQ3OC4wNDk3LjQ2MDc0LS4wNjIyLjkyMzczLS4zMTU4IDEuMzExNTktLjAyNDcuMDM3ODItLjA1MzMuMDcyODktLjA4NTUuMTA0NjNsLTMuNDgwNCAzLjQzNjM2Yy0uMDgxNi4wODA1Mi0uMTgzNC4xMzc1Mi0uMjk0Ni4xNjQ5OWwtMi41NzgxMS42MzYzNmMtLjIxNzAyLjA1MzU3LS40NDYyNC0uMDEwNjYtLjYwMzgyLS4xNjkxOS0uMTU3NTktLjE1ODU0LS4yMjA0NC0uMzg4MTQtLjE2NTU3LS42MDQ4M2wuNjQ0NTItMi41NDU0NmMuMDI4NDktLjExMjUxLjA4NzItLjIxNTA4LjE2OTc5LS4yOTY2M2wzLjQ4MDM5LTMuNDM2MzZjLjAzMi0uMDMxNTcuMDY3Mi0uMDU5NjcuMTA1MS0uMDgzODE2WiIgY2xpcC1ydWxlPSJldmVub2RkIi8+Cjwvc3ZnPg==');
+      }
+    }
+    ul {
+      position: relative;
+      &::before {
+        content: '';
+        background-color: $weak;
+        position: absolute;
+        width: 3px;
+        top: 17px;
+        bottom: 8px;
+        left: 4px;
+        transform: translateX(-50%);
+      }
+    }
+    & :global(.toc__list) {
+      :global(a) {
+        @include font-size(14px);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        &::before,
+        &::after {
+          content: '';
+        }
+        &::before {
+          display: block;
+          left: 0;
+          top: 50%;
+          width: 8px;
+          height: 8px;
+          border-radius: 100%;
+          background-color: $weak;
+        }
+      }
+      &.is_active {
+        > :global(a)::before {
+          background-color: $primary;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+  const smoothScroll = () => {
+    const targets = document.querySelectorAll('.toc a[href^="#"]');
+    targets.forEach((target) => {
+      target.addEventListener('click', (event) => {
+        event.preventDefault();
+        const id = target.getAttribute('href');
+        if (!id) return;
+        const sclollToElement = document.querySelector(id);
+        if (sclollToElement) {
+          sclollToElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  };
+  smoothScroll();
+  document.addEventListener('astro:after-swap', () => smoothScroll());
+</script>

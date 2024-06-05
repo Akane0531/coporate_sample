@@ -1,0 +1,43 @@
+// break points
+// ------------------------------------------------------------------------
+
+$max: 1980px;
+$xl: 1280px;
+$lg: 1024px;
+$md: 768px;
+$sm: 640px;
+$xs: 375px;
+
+$break-points: (
+  'max': $max,
+  'xl': $xl,
+  'lg': $lg,
+  'md': $md,
+  'sm': $sm,
+  'xs': $xs,
+);
+
+// colors
+// -----------------------------------------------------------
+
+$base: #fff;
+$text: #28241d;
+$primary: #60e1e0;
+$accent: #8663d1;
+$line: #707070;
+$weak: #d9d9d9;
+$bg: #f8f7f4;
+
+// $facebook: #1877f2;
+// $twitter: #1da1f2;
+// $x: #000000;
+// $line: #00b900;
+// $pinterest: #bd081c;
+// $pocket: #ee4056;
+// $hatena: #008fde;
+
+// fonts
+// -----------------------------------------------------------
+
+$font-body: 'Noto Sans JP Variable', sans-serif;
+$font-display: 'Lato', sans-serif;

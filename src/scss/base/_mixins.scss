@@ -1,0 +1,123 @@
+@use '../variables/_index' as *;
+
+// mixin
+// -----------------------------------------------------------
+
+@mixin xl {
+  @media (max-width: ($xl)) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (max-width: ($lg)) {
+    @content;
+  }
+}
+@mixin md {
+  @media (max-width: ($md)) {
+    @content;
+  }
+}
+@mixin sm {
+  @media (max-width: ($sm)) {
+    @content;
+  }
+}
+@mixin xs {
+  @media (max-width: ($xs)) {
+    @content;
+  }
+}
+
+@mixin lgmin {
+  @media (min-width: ($lg + 1)) {
+    @content;
+  }
+}
+@mixin mdmin {
+  @media (min-width: ($md + 1)) {
+    @content;
+  }
+}
+@mixin smmin {
+  @media (min-width: ($sm + 1)) {
+    @content;
+  }
+}
+
+@mixin max {
+  @media (min-width: (1920 + 1)) {
+    @content;
+  }
+}
+
+@mixin wrap {
+  margin-inline: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+
+  @include md {
+    margin-inline: unquote('max(1rem, ((100% - #{$lg}) / 2))');
+  }
+}
+
+@mixin sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@mixin lineHeightCrop($line-height) {
+  &::before {
+    display: block;
+    width: 0;
+    height: 0;
+    margin-top: calc((1 - #{$line-height}) * 0.5em);
+    content: '';
+  }
+  &::after {
+    display: block;
+    width: 0;
+    height: 0;
+    margin-bottom: calc((1 - #{$line-height}) * 0.5em);
+    content: '';
+  }
+}
+
+@mixin textCrop($line-height: 1.3, $top-adjustment: 0px, $bottom-adjustment: 0px) {
+  // Mixin generated at: http://text-crop.eightshapes.com/?typeface-selection=google-font&typeface=Teko&custom-typeface-name=Helvetica&custom-typeface-url=&custom-typeface-weight=400&custom-typeface-style=normal&weight-and-style=300&size=31&line-height=1&top-crop=3&bottom-crop=8
+
+  // Configured in Step 1
+  $top-crop: 3;
+  $bottom-crop: 8;
+  $crop-font-size: 31;
+  $crop-line-height: 1;
+
+  // Apply values to calculate em-based margins that work with any font size
+  $dynamic-top-crop: max(($top-crop + ($line-height - $crop-line-height) * ($crop-font-size / 2)), 0) / $crop-font-size;
+  $dynamic-bottom-crop: max(($bottom-crop + ($line-height - $crop-line-height) * ($crop-font-size / 2)), 0) / $crop-font-size;
+
+  // Mixin output
+  line-height: $line-height;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    height: 0;
+    width: 0;
+  }
+
+  &::before {
+    margin-bottom: calc(-#{$dynamic-top-crop}em + #{$top-adjustment});
+  }
+
+  &::after {
+    margin-top: calc(-#{$dynamic-bottom-crop}em + #{$bottom-adjustment});
+  }
+}

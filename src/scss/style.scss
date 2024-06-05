@@ -1,0 +1,17 @@
+// @use './modules/_normalize' as *;
+
+@use './variables/_index' as *;
+@use './base/_index' as *;
+
+@use './utils/_webfonts' as *;
+@use './utils/_basic' as *;
+@use './utils/_common' as *;
+
+// @use './components/_index' as *;
+// @use './pages/_index' as *;
+
+:root {
+  @each $key, $width in $break-points {
+    --media-#{$key}: #{$width};
+  }
+}

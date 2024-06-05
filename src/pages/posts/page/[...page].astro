@@ -1,0 +1,76 @@
+---
+import BaseLayout from '@/layouts/BaseLayout';
+import { type CollectionEntry } from 'astro:content';
+import { getPosts, getCategories } from '@/utils';
+import { siteConfig } from '@/data/site.config';
+
+import ListPosts from '@/components/ListPosts.astro';
+import Pagination from '@/components/Pagination.astro';
+import Chip from '@/components/Chip.astro';
+
+export async function getStaticPaths({ paginate }: any) {
+  const allPosts = await getPosts();
+  return paginate(allPosts, { pageSize: siteConfig.paginationSize });
+}
+
+// https://docs.astro.build/ja/guides/routing/#%E5%AE%8C%E5%85%A8%E3%81%AAapi%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9
+
+type Props = {
+  page: {
+    data: CollectionEntry<'posts'>[];
+  };
+};
+
+// page settings
+
+const title = 'Posts';
+const pageHeader = true;
+const slug = ['posts', 'archive'];
+
+// page settings end
+
+const categories = await getCategories();
+const { page } = Astro.props;
+const posts = page.data;
+---
+
+<BaseLayout title={title} pageHeader={pageHeader} slug={slug}>
+  <div class='wrap'>
+    <dl class='categories'>
+      <dt>カテゴリー:</dt>
+      <dd>
+        {
+          categories.map((category: string) => (
+            <>
+              <a href={`/categories/${category}`}>
+                <Chip variant='wave' label={category} />
+              </a>
+            </>
+          ))
+        }
+      </dd>
+    </dl>
+    <ListPosts posts={posts} layout='single' />
+    <Pagination page={page} />
+  </div>
+</BaseLayout>
+
+<style lang='scss'>
+  .wrap {
+    display: grid;
+    gap: 80px;
+  }
+  .categories {
+    display: flex;
+    gap: 30px;
+    dt {
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    dd {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+</style>

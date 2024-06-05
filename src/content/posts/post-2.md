@@ -6,6 +6,7 @@ image:
   url: 'https://docs.astro.build/assets/arc.webp'
   alt: 'Astroのアークのサムネイル。'
 pubDate: 2022-07-08
+category: 'Category 1'
 tags: ['astro', 'ブログ', '公開学習', '成功']
 ---
 

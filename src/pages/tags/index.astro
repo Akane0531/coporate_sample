@@ -1,14 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
+
 import BaseLayout from '@/layouts/BaseLayout';
+import { Container } from '@/components/index';
+
 const pageTitle = 'tags';
 
 const allPosts = await getCollection('posts');
-const tags = [...new Set(allPosts.map((post: { data: { tags: any; }; }) => post.data.tags).flat())];
+const tags = [...new Set(allPosts.map((post: { data: { tags: any } }) => post.data.tags).flat())];
 ---
 
 <BaseLayout title={pageTitle}>
-  <main>
+  <Container>
     <div class='tags'>
       {
         tags.map((tag) => (
@@ -18,7 +21,7 @@ const tags = [...new Set(allPosts.map((post: { data: { tags: any; }; }) => post.
         ))
       }
     </div>
-  </main>
+  </Container>
 </BaseLayout>
 
 <style>

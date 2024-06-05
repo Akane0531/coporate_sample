@@ -1,0 +1,116 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+/*
+title, caption または slot からテキストを挿入する
+両方ある場合はslotの方が優先される
+
+<heading title='私たちについて' caption='About Us aaaa' variant='left' />
+
+<heading variant='left'>
+  私たちについて
+  <Fragment slot='caption'>About Us</Fragment>
+</heading>
+*/
+
+interface Props {
+  tag?: string;
+  variant?: VariantKey | VariantKey[];
+  title?: string;
+  caption?: string;
+}
+
+type BaseStyle = {
+  parent: string;
+  heading: string;
+  divider: string;
+  paragraph: string;
+};
+
+type VariantKey = keyof typeof variantStyles;
+
+const { tag = 'h2', variant = 'default', title, caption } = Astro.props;
+const Tag = tag;
+
+const baseStyle: BaseStyle = {
+  parent: 'heading flex flex-wrap',
+  heading: 'heading__title text-sm',
+  divider: 'heading__divider bg-cyan-400',
+  paragraph: 'heading__caption md:text-4xl sm:text-3xl text-2xl ont-bold font-display uppercase tracking-[.1em]',
+};
+
+// Tailwind は明示的にクラス名を書く必要がある
+// https://tailwindcss.com/docs/content-configuration#dynamic-class-names
+
+const variantStyles = {
+  default: {
+    parent: 'flex-row items-center justify-start gap-x-4',
+    heading: '',
+    divider: 'w-1 h-8 -order-none',
+    paragraph: '',
+  },
+  'md:default': {
+    parent: 'md:flex-row md:items-center md:justify-start md:gap-x-4',
+    heading: '',
+    divider: 'md:w-1 md:h-8 md:-order-none',
+    paragraph: '',
+  },
+  left: {
+    parent: ' relative pb-4 flex-col gap-2',
+    heading: '',
+    divider: 'order-1 h-1 w-8',
+    paragraph: '',
+  },
+  center: {
+    parent: 'relative pb-4 flex-col gap-2 justify-center items-center',
+    heading: '',
+    divider: 'order-1 h-1 w-8',
+    paragraph: '',
+  },
+  'md:center': {
+    parent: 'md:relative md:pb-4 md:flex-col md:gap-2 md:justify-center md:items-center',
+    heading: '',
+    divider: 'md:order-1 md:h-1 md:w-8',
+    paragraph: '',
+  },
+};
+
+const renderStyle = (variant: VariantKey | VariantKey[]) => {
+  const variants = Array.isArray(variant) ? variant : [variant];
+  const mergedStyles = (Object.keys(baseStyle) as Array<keyof BaseStyle>).reduce((acc: BaseStyle, key) => {
+    acc[key] = baseStyle[key];
+    variants.forEach((variant) => {
+      acc[key] = twMerge(acc[key], variantStyles[variant][key]);
+    });
+    return acc;
+  }, {} as BaseStyle);
+
+  return mergedStyles;
+};
+
+const mergedStyles = renderStyle(variant);
+---
+
+<hgroup class={mergedStyles.parent}>
+  {
+    Astro.slots.caption && (
+      <p class={mergedStyles.paragraph} lang='en'>
+        <slot name='caption' />
+      </p>
+    )
+  }
+  {
+    !Astro.slots.caption && caption && (
+      <p class={mergedStyles.paragraph} lang='en'>
+        {caption}
+      </p>
+    )
+  }
+  <span class={mergedStyles.divider}></span>
+  <Tag>
+    <div class={mergedStyles.heading}>
+      {Astro.slots.default && <slot />}
+      {!Astro.slots.default && title && title}
+    </div>
+  </Tag>
+</hgroup>

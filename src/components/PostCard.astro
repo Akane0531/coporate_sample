@@ -1,0 +1,59 @@
+---
+import { twMerge } from 'tailwind-merge';
+import { Img } from 'astro-imagetools/components';
+import Chip from '@/components/Chip.astro';
+
+import FormattedDate from '@/components/FormattedDate.astro';
+import { encodeBase64 } from '@/utils';
+
+const {
+  id,
+  data: { title, description, pubDate, image, category },
+  variant = 'default',
+  readTime,
+  slug,
+} = Astro.props;
+
+const style = 'grid gap-y-2 gap-x-16';
+---
+
+<article class={twMerge(variant, style)}>
+  <header>
+    <a class='block rounded-sm overflow-hidden' href={`/posts/${slug}/`}>
+      <div transition:name={'img-' + encodeBase64(title)}>
+        <Img src={image.url} alt={image.alt || title} />
+      </div>
+    </a>
+  </header>
+  <main>
+    <div class='flex gap-2 flex-wrap items-center'>
+      <FormattedDate date={pubDate} />
+      <a href={`/categories/${category}`}>
+        <Chip variant='outlined' size='small' label={category} />
+      </a>
+    </div>
+    <a class='font-bold' href={`/posts/${slug}/`}>{title}</a>
+    {description && <p class='text-sm'>{description}</p>}
+  </main>
+</article>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  .horizontal {
+    grid-template-columns: 320px 1fr;
+    padding: 0 0 40px;
+    border-bottom: solid 1px $weak;
+    @include sm {
+      grid-template-columns: 1fr;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: center;
+    }
+  }
+</style>

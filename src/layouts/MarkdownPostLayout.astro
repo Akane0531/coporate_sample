@@ -1,54 +1,243 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout';
-import { fade } from 'astro:transitions';
-const { frontmatter } = Astro.props;
+import { getCategories, getTags, getRelatedPosts } from '@/utils';
+import { encodeBase64 } from '@/utils';
 
-const stringToHash = (string: string): string => {
-  let hash = 0;
-  if (string.length == 0) return hash.toString();
-  for (let i = 0; i < string.length; i++) {
-    let char = string.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash).toString(16); // Convert to absolute value and convert to hexadecimal string
-};
+import { Img } from 'astro-imagetools/components';
+import FormattedDate from '@/components/FormattedDate.astro';
+import Chip from '@/components/Chip.astro';
+import TOC from '@/components/TableOfContents.astro';
+
+const { frontmatter, headings, slug } = Astro.props;
+const categories = await getCategories();
+const Tags = await getTags();
+const relatedPosts = await getRelatedPosts(slug);
 ---
 
 <BaseLayout title={frontmatter.title}>
-  <h2 transition:name={'title-' + encodeBase64(frontmatter.title)}>{frontmatter.title}</h2>
-  <p>投稿日: {frontmatter.pubDate.toString().slice(0, 10)}</p>
-  <p transition:animate={fade({ duration: '2s' })}><em>{frontmatter.description}</em></p>
-  <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
-  <img src={frontmatter.image.url} width='300' alt={frontmatter.image.alt} transition:name={'img-' + stringToHash(frontmatter.title)} />
-  <div class='tags'>
-    {
-      frontmatter.tags.map((tag: string) => (
-        <p class='tag'>
-          <a href={`/tags/${tag}`}>{tag}</a>
-        </p>
-      ))
-    }
-  </div>
-  <slot />
+  <article class='post wrap'>
+    <main>
+      <header>
+        <div transition:name={'img-' + encodeBase64(frontmatter.title)}>
+          <Img src={frontmatter.image.url} alt={frontmatter.image.alt || frontmatter.title} />
+        </div>
+        <h2 transition:name={'title-' + encodeBase64(frontmatter.title)}>{frontmatter.title}</h2>
+        <p>投稿日: <FormattedDate date={frontmatter.pubDate} /></p>
+        <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
+        <p><em>{frontmatter.description}</em></p>
+        <dl class='tags'>
+          <dt>タグ:</dt>
+          <dd>
+            {
+              frontmatter.tags.map((tag: string) => (
+                <a href={`/tags/${tag}`}>
+                  <Chip variant='outlined' size='small' label={tag} />
+                </a>
+              ))
+            }
+          </dd>
+        </dl>
+      </header>
+      <div class='post__contents prose lg:prose-lg'>
+        <slot />
+      </div>
+      <footer>
+        <nav class='footerPosts'>
+          <div class='footerPosts__inner'>
+            <div class='footerPosts__link footerPosts__link--prev'>
+              {
+                relatedPosts.prev && (
+                  <>
+                    <p>前の記事</p>
+                    <a href={`/posts/${relatedPosts.prev.slug}`}>{relatedPosts.prev.data.title}</a>
+                  </>
+                )
+              }
+            </div>
+            <a class='footerPosts__link footerPosts__link--archive' href='/posts/page/'></a>
+            <div class='footerPosts__link footerPosts__link--next'>
+              {
+                relatedPosts.next && (
+                  <>
+                    <p>次の記事</p>
+                    <a href={`/posts/${relatedPosts.next.slug}`}>{relatedPosts.next.data.title}</a>
+                  </>
+                )
+              }
+            </div>
+          </div>
+        </nav>
+      </footer>
+    </main>
+    <aside>
+      <dl class='categories'>
+        <dt>Category</dt>
+        {
+          categories.map((category: string) => (
+            <dd>
+              <a href={`/categories/${category}`}>{category}</a>
+            </dd>
+          ))
+        }
+      </dl>
+      <div class='toc'>
+        <TOC headings={headings} />
+      </div>
+    </aside>
+  </article>
 </BaseLayout>
 
-<style>
-  a {
-    color: #00539f;
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  .post {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    @include md {
+      flex-direction: column;
+    }
+    &__contents {
+      margin: 64px 0 0;
+    }
+  }
+  main {
+    max-width: 660px;
+    flex-shrink: 0;
+    @include md {
+      max-width: unset;
+    }
+    header {
+      display: grid;
+      gap: 16px;
+    }
+    footer {
+      margin: 80px 0 0;
+      padding: 40px 0;
+      border-top: solid 1px $weak;
+    }
   }
 
+  aside {
+    width: 100%;
+    max-width: 320px;
+    @include md {
+      max-width: unset;
+    }
+  }
+  .footerPosts {
+    &__inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+    }
+    &__link {
+      display: flex;
+      flex-direction: column;
+      min-width: 120px;
+      @include font-size(14px);
+      &--prev {
+        align-items: flex-start;
+      }
+      &--next {
+        align-items: flex-end;
+      }
+
+      &--archive {
+        justify-content: center;
+        align-items: center;
+
+        padding: 0 16px;
+        &::before {
+          content: '';
+          width: 15px;
+          height: 15px;
+          display: inline-block;
+          vertical-align: bottom;
+          background-color: $accent;
+          mask-size: contain;
+          mask-position: center;
+          mask-repeat: no-repeat;
+          mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNSAxNSI+CiAgPGNpcmNsZSBjeD0iMS41IiBjeT0iMS41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI3LjUiIGN5PSIxLjUiIHI9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEuNSIgY3k9IjcuNSIgcj0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iNy41IiBjeT0iNy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxMy41IiBjeT0iNy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxLjUiIGN5PSIxMy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI3LjUiIGN5PSIxMy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxMy41IiBjeT0iMTMuNSIgcj0iMS41Ii8+Cjwvc3ZnPg==');
+        }
+      }
+    }
+  }
+  .toc {
+    position: sticky;
+    margin: 80px 0 0;
+    top: 40px;
+  }
   .tags {
     display: flex;
-    flex-wrap: wrap;
+    gap: 30px;
+    dt {
+      flex-shrink: 0;
+    }
+    dd {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
   }
-
-  .tag {
-    margin: 0.25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: 0.5em;
-    padding: 0.5em 1em;
-    font-size: 1.15em;
-    background-color: #f8fcfd;
+  .categories {
+    dt {
+      font-family: $font-display;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      @include font-size(24px);
+    }
+    dd {
+      a {
+        border-bottom: solid 1px $primary;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px;
+        margin: 16px 0 0;
+        &::before {
+          content: '';
+          width: 9px;
+          height: 9px;
+          background-color: $weak;
+          flex-shrink: 0;
+          clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+      }
+    }
   }
 </style>
+
+<script>
+  const fnObserver = () => {
+    const option = { root: null, rootMargin: '0px 0px 0px', threshold: 1 };
+    const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6');
+    const observer = new IntersectionObserver((entries) => callback(entries), option);
+
+    headings.forEach((heading) => {
+      observer.observe(heading);
+    });
+
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute('id');
+        const targets = document.querySelectorAll(`.toc a[href="#${id}"]`);
+        targets.forEach((target) => {
+          const parentElement = target.parentElement;
+          if (entry.isIntersecting) {
+            parentElement?.classList.add('is_active');
+          } else {
+            parentElement?.classList.remove('is_active');
+          }
+        });
+      });
+    };
+  };
+  fnObserver();
+  document.addEventListener('astro:after-swap', fnObserver);
+</script>

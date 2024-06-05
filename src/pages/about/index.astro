@@ -1,62 +1,144 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout';
-const pageTitle = '私について';
-const identity = {
-  firstName: 'サラ',
-  country: 'カナダ',
-  occupation: '技術ライター',
-  hobbies: ['写真', 'バードウォッチング', '野球'],
-};
-const skills = ['HTML', 'CSS', 'JavaScript', 'React', 'Astro', 'ドキュメントの執筆'];
+import { Img } from 'astro-imagetools/components';
+import Heading from '@/components/Heading.astro';
+import { Container } from '@/components/index';
 
-const happy = true;
-const finished = true;
-const goal = 3;
+// page settings
+const title = 'About Us';
+const pageHeader = true;
 
-const skillColor = 'navy';
-const fontWeight = 'bold';
-const textCase = 'uppercase';
+// page settings end
 ---
 
-<BaseLayout title='Welcome to Astro.'>
-  <main>
-    <h1>{pageTitle}</h1>
-    <h1>私のAstroサイト</h1>
-    <h2>... そして私の新しいAstroサイトについて！</h2>
+<BaseLayout title={title} pageHeader={pageHeader}>
+  <section class='about'>
+    <Container>
+      <div class='about__intro'>
+        <Heading title='私たちについて' caption='About Us' variant='left' />
+        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        <div class='about__intro_img'>
+          <Img src='/src/assets/about/about-01.jpg' alt='A local' layout='fill' />
+        </div>
+      </div>
+    </Container>
+    <div class='about__services'>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-01.jpg' alt='A local' />
+        </div>
+      </div>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-02.jpg' alt='A local' />
+        </div>
+      </div>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-03.jpg' alt='A local' />
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <p>私はAstroの入門チュートリアルを進めています。これは私のウェブサイトの2番目のページで、自分で作った初めてのページです！</p>
+  <style lang='scss'>
+    @use '/src/scss/variables/_index' as *;
+    @use '/src/scss/base/_index' as *;
+    @use '/src/scss/modules/_rfs' as *;
 
-    <p>このサイトはチュートリアルを進めるにつれて更新されていきます。定期的にチェックして、私の旅の様子を見に来てください！</p>
-
-    <p>以下は私に関するいくつかの事実です。</p>
-    <ul>
-      <li>私の名前は{identity.firstName}です。</li>
-      <li>{identity.country}に住んでおり、{identity.occupation}として働いています。</li>
-      {
-        identity.hobbies.length >= 2 && (
-          <li>
-            私の2つの趣味は{identity.hobbies[0]}と{identity.hobbies[1]}です。
-          </li>
-        )
+    .about {
+      &__intro {
+        display: grid;
+        gap: 24px;
       }
-    </ul>
-    <p>私のスキルは以下の通りです。</p>
-    <ul>
-      {skills.map((skill) => <li class='skill'>{skill}</li>)}
-    </ul>
+      &__intro_img {
+        overflow: hidden;
+        border-radius: 4px;
+      }
+      &__services {
+        margin: 120px 0 80px;
+        display: grid;
+        gap: 80px;
+        @include md {
+          gap: 40px;
+        }
+      }
+      &__row {
+        display: flex;
+        align-items: flex-end;
+        gap: 0 40px;
 
-    {happy && <p>I am happy to be learning Astro! Astroを学べて幸せです！</p>}
+        @include md {
+          align-items: flex-start;
 
-    {finished && <p>I finished this tutorial! このチュートリアルを終えました！</p>}
+          flex-direction: column-reverse !important;
+        }
 
-    {goal === 3 ? <p>My goal is to finish in 3 days. 3日で終えるのが目標です。</p> : <p>My goal is not 3 days. 3日が目標ではありません。</p>}
-  </main>
+        @include mdmin {
+          &:nth-of-type(odd) {
+            margin-inline-start: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+          }
+          &:nth-of-type(even) {
+            margin-inline-end: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+            flex-direction: row-reverse;
+          }
+        }
+      }
+      &__img {
+        padding: 0 0 40px;
+        @include md {
+          padding: 0;
+          margin-inline-start: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+        }
+      }
+      &__desc {
+        display: grid;
+        gap: 16px;
+        max-width: 420px;
+        position: relative;
+        margin: 60px 0 0;
+        padding: 40px;
+        @include md {
+          width: calc(100% - 80px);
+          padding: 64px 24px;
+          margin: -40px 0 0;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: calc(100% + 160px);
+          background-color: $bg;
+          @include md {
+            width: 100%;
+          }
+        }
+        @include md {
+          max-width: unset;
+        }
+      }
+      &__row:nth-of-type(even) &__desc {
+        &::before {
+          left: unset;
+          right: 0;
+        }
+      }
+    }
+  </style>
 </BaseLayout>
-
-<style define:vars={{ skillColor, fontWeight, textCase }}>
-  .skill {
-    color: green;
-    color: var(--skillColor);
-    font-weight: bold;
-  }
-</style>

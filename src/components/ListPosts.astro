@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from '@/components/PostCard.astro';
+
+type Props = {
+  posts: CollectionEntry<'posts'>[];
+  layout?: 'grid' | 'single';
+};
+
+const { posts, layout = 'grid' } = Astro.props;
+
+const variants = {
+  grid: 'default',
+  single: 'horizontal',
+};
+---
+
+<ul class:list={['layout', `layout--${layout}`]}>
+  {
+    posts.map((post) => (
+      <li>
+        <PostCard id={post.id} data={post.data} variant={variants[layout]} slug={post.slug} />
+      </li>
+    ))
+  }
+</ul>
+
+<style lang='scss' scoped>
+  @use 'sass:math';
+
+  ul {
+  }
+  .layout {
+    display: grid;
+
+    &--single {
+      gap: 86px;
+    }
+    &--grid {
+      display: grid;
+      gap: 30px;
+      grid-template-columns: repeat(auto-fill, minmax(min(math.div((960px - (30px * 2)), 3), 100%), 1fr));
+    }
+  }
+</style>

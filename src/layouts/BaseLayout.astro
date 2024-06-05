@@ -1,58 +1,38 @@
 ---
-interface Props {
-  title: string;
-}
+import BaseHead from '@/components/BaseHead.astro';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import TwSizeIndicator from '@/components/TwSizeIndicator.astro';
 
-const { title } = Astro.props;
+const { title, slug = [], pageHeader = true, description, image, articleDate } = Astro.props;
 
-import '../styles/global.css';
-
-import { ViewTransitions } from 'astro:transitions';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+const pathnames = Astro.url.pathname.replace(/^\/|\/$/g, '').split('/');
+const bodyClass = [...slug, ...pathnames].filter(Boolean).join(' ');
 ---
 
 <!doctype html>
-<html lang='en'>
+<html lang='ja'>
   <head>
-    <meta charset='UTF-8' />
-    <meta name='description' content='Astro description' />
-    <meta name='viewport' content='width=device-width' />
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-    <meta name='generator' content={Astro.generator} />
-    <ViewTransitions />
-    <title>{title}</title>
+    <BaseHead title={title} slug={slug} description={description} ogImage={image} articleDate={articleDate} />
   </head>
-  <body>
-    <h1 transition:name='title' transition:animate='slide'>{title}</h1>
-    <Header />
-    <slot />
-    <Footer />
-    <script>
-      import '../scripts/menu.js';
-    </script>
-    <style is:global>
-      :root {
-        --accent: 136, 58, 234;
-        --accent-light: 224, 204, 250;
-        --accent-dark: 49, 10, 101;
-        --accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
-      }
-      html {
-        /* font-family: system-ui, sans-serif;
-    background: #13151a;
-    background-size: 224px; */
-      }
-      code {
-        font-family:
-          Menlo,
-          Monaco,
-          Lucida Console,
-          Liberation Mono,
-          DejaVu Sans Mono,
-          Bitstream Vera Sans Mono,
-          Courier New,
-          monospace;
+  <body class={bodyClass}>
+    <div class='contents'>
+      <Header />
+      {pageHeader && <PageHeader title={title} />}
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <TwSizeIndicator />
+
+    <style lang='scss'>
+      .contents {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
     </style>
   </body>

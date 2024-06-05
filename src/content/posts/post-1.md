@@ -6,6 +6,7 @@ author: 'Astro学習者'
 image:
   url: 'https://docs.astro.build/assets/full-logo-light.png'
   alt: 'Astroのロゴ。'
+category: 'Category 1'
 tags: ['astro', 'ブログ', '公開学習']
 ---
 

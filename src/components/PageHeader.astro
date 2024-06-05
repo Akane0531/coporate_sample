@@ -1,0 +1,91 @@
+---
+import { Img } from 'astro-imagetools/components';
+
+// interface Props {
+// }
+
+const { title, caption, image } = Astro.props;
+---
+
+<header class='page_header'>
+  <div class='page_header__inner'>
+    <div class='page_header__col'>
+      <Img
+        src='/src/assets/recommend_bg.jpg'
+        alt='A local'
+        layout='fill'
+        attributes={{
+          img: {
+            class: 'page_header__bg',
+          },
+        }}
+      />
+      <h2>{title}</h2>
+      {caption && <p>caption</p>}
+    </div>
+  </div>
+</header>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+
+  .page_header {
+    &__inner {
+      position: relative;
+      padding: 150px 0 0;
+      margin: 0 0 120px;
+      @include md {
+        padding: 80px 0 0;
+        margin: 0 0 80px;
+      }
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 80px);
+        background-image: linear-gradient(rgba($primary, 0.8), rgba($primary, 0.8)), url('/wave_bg_01.jpg');
+        background-size: cover;
+        background-position: center;
+      }
+    }
+    :global(.page_header__bg) {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+    }
+    &__col {
+      margin-inline: unquote('max(1rem, ((100% - #{$xl}) / 2))');
+      position: relative;
+      z-index: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 340px;
+      color: $base;
+      @include md {
+        height: 240px;
+        align-items: flex-start;
+        padding: 0 24px;
+      }
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+      }
+      &::before {
+        background-color: #fff;
+        opacity: 0.2;
+      }
+      &::after {
+        background-image: linear-gradient($accent, $primary);
+        opacity: 0.5;
+      }
+    }
+  }
+</style>

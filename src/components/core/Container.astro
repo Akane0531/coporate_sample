@@ -1,0 +1,38 @@
+---
+/*
+size または width で 幅を指定できる。
+両方ある場合はwidthの値が優先される。
+sizeについては CSS変数を参照。
+
+<Container size='xl' class='hoge'>
+  <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+</Container>
+*/
+
+interface Props {
+  align?: 'left' | 'right';
+  size?: 'max' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
+  width?: string;
+  class?: string;
+}
+
+const { align, size = 'lg', width, class: className, ...rest } = Astro.props;
+
+const container_width = width ? width : `var(--media-${size})`;
+---
+
+<div class:list={['content_container', `${align ? `content_container--${align}` : ``}`, className]} {...rest}>
+  <slot />
+</div>
+
+<style lang='scss' define:vars={{ container_width: container_width }}>
+  .content_container {
+    margin-inline: unquote('max(2rem, ((100% - var(--container_width)) / 2))');
+    &--left {
+      margin-inline-start: unset;
+    }
+    &--right {
+      margin-inline-end: unset;
+    }
+  }
+</style>

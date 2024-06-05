@@ -6,6 +6,7 @@ image:
   url: 'https://docs.astro.build/default-og-image.png'
   alt: '惑星と星のイラストの中にastroという単語があります。'
 pubDate: 2022-08-08
+category: 'Category 2'
 tags: ['astro', '成功']
 ---
 
