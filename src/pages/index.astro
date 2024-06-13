@@ -726,16 +726,13 @@ const contact = [
 </style>
 
 <script>
+  import { animate, stagger, inView, timeline, type TimelineDefinition } from 'motion';
   import Splide from '@splidejs/splide';
   import '@splidejs/splide/css';
 
-  document.addEventListener('astro:page-load', () => {
-    const slide_index = document.querySelector('.recommend__slider_index');
-    if (!document.querySelector('.splide')) {
-      return;
-    }
-
-    const splide_opt = {
+  const recommendSlider = {
+    slide_index_class: '.recommend__slider_index',
+    splide_opt: {
       autoScroll: {
         pauseOnHover: false,
       },
@@ -747,21 +744,95 @@ const contact = [
           fixedWidth: 320,
         },
       },
-    };
+    },
+    init() {
+      const slide_index = document.querySelector(this.slide_index_class);
 
-    const splide = new Splide('.recommend-splide', { ...splide_opt });
-    splide.on('mounted', () => {
-      // この処理は実行される
-      if (slide_index) {
-        slide_index.innerHTML = `${splide.index + 1}/${splide.length}`;
+      if (!document.querySelector('.splide')) {
+        return;
       }
-    });
-    splide.on('moved', () => {
-      if (slide_index) {
-        slide_index.innerHTML = `${splide.index + 1}/${splide.length}`;
-      }
-    });
 
-    splide.mount();
+      const splide = new Splide('.recommend-splide', { ...this.splide_opt });
+      splide.on('mounted', () => {
+        // この処理は実行される
+        if (slide_index) {
+          slide_index.innerHTML = `${splide.index + 1}/${splide.length}`;
+        }
+      });
+      splide.on('moved', () => {
+        if (slide_index) {
+          slide_index.innerHTML = `${splide.index + 1}/${splide.length}`;
+        }
+      });
+
+      splide.mount();
+    },
+  };
+
+  const animations = {
+    margin: '0px 0px -20% 0px',
+
+    init() {
+      console.log('🚀 ~ init ~ init:', 'animations');
+      // inView('.concept', (info) => {
+      //   console.log('The link ', info.target, ' has entered the viewport');
+      // });
+
+      inView('.concept', this.concept().play, { margin: this.margin });
+      inView('.about', this.about().play, { margin: this.margin });
+      inView('.information', this.information().play, { margin: this.margin });
+      inView('.contact', this.contact().play, { margin: this.margin });
+    },
+
+    concept() {
+      const sequence = [
+        ['.concept__desc > *', { opacity: [0, 1], x: [100, 0] }, { duration: 0.6, delay: stagger(0.1) }],
+        ['.concept picture', { opacity: [0, 1], y: [100, 0] }, { duration: 0.6 }],
+      ] satisfies TimelineDefinition;
+
+      return timeline(sequence, { duration: 1.6, autoplay: false });
+    },
+
+    about() {
+      const sequence = [
+        ['.about__desc > *', { opacity: [0, 1], x: [100, 0] }, { duration: 0.6, delay: stagger(0.1) }],
+        ['.about__img', { opacity: [0, 1], y: [100, 0] }, { duration: 0.6, delay: stagger(0.1) }],
+      ] satisfies TimelineDefinition;
+
+      return timeline(sequence, { duration: 1.6, autoplay: false });
+    },
+
+    information() {
+      const sequence = [
+        ['.information .heading', { opacity: [0, 1], x: [-100, 0] }, { duration: 0.6 }],
+        ['.information .btn', { opacity: [0, 1], x: [100, 0] }, { duration: 0.6, at: '<' }],
+        ['.information article', { opacity: [0, 1], transform: ['scale(0.8)', 'scale(1)'] }, { duration: 0.6 }],
+      ] satisfies TimelineDefinition;
+
+      return timeline(sequence, { autoplay: false });
+    },
+
+    contact() {
+      const sequence = [
+        ['.contact .heading', { opacity: [0, 1], y: [100, 0] }, { duration: 0.6 }],
+        ['.contact__card', { opacity: [0, 1], transform: ['scale(0.8)', 'scale(1)'] }, { duration: 0.6 }],
+      ] satisfies TimelineDefinition;
+
+      return timeline(sequence, { autoplay: false });
+    },
+  };
+
+  const businessCard = {
+    targetClass: '.business__card',
+    state: new Map(),
+
+    init() {},
+  };
+
+  document.addEventListener('astro:page-load', () => {
+    if (!document.body.classList.contains('home')) return;
+
+    animations.init();
+    recommendSlider.init();
   });
 </script>
