@@ -1,0 +1,1 @@
+export { scrollTrigger } from './scroll';
