@@ -15,7 +15,7 @@ export interface Props {
 ---
 
 <li class={className} {...rest}>
-  <a href={'#' + heading.slug}>
+  <a href={'#' + heading.slug} {...rest}>
     {heading.text}
   </a>
   {

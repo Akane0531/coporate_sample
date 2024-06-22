@@ -83,21 +83,17 @@ function buildToc(headings: TableOfContent[]) {
         transform: translateX(-50%);
       }
     }
-    & :global(.toc__list) {
-      :global(a) {
+    &__list {
+      a {
         @include font-size(14px);
         display: flex;
         align-items: center;
         gap: 12px;
         position: relative;
-        &::before,
-        &::after {
-          content: '';
-        }
         &::before {
+          content: '';
           display: block;
-          left: 0;
-          top: 50%;
+          flex-shrink: 0;
           width: 8px;
           height: 8px;
           border-radius: 100%;
@@ -105,7 +101,7 @@ function buildToc(headings: TableOfContent[]) {
         }
       }
       &.is_active {
-        > :global(a)::before {
+        > a::before {
           background-color: $primary;
         }
       }
