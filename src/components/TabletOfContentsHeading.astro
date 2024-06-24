@@ -22,7 +22,7 @@ export interface Props {
     heading.subheadings.length > 0 && (
       <ul class='ml-4'>
         {heading.subheadings.map((subheading) => (
-          <Astro.self heading={subheading} class={className} />
+          <Astro.self heading={subheading} class={className} {...rest} />
         ))}
       </ul>
     )
