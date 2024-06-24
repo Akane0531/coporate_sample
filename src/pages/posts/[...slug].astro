@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 
-import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
+import Layout from '../../layouts/MarkdownPostLayout.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('posts');
@@ -16,8 +16,14 @@ type Props = CollectionEntry<'posts'>;
 const { slug } = Astro.params;
 const post = Astro.props;
 const { Content, headings } = await post.render();
+
+const breadcrumb = [
+  { label: 'お知らせ', href: '/posts/page', 'aria-label': undefined },
+  { label: post.data.title, href: Astro.url.pathname, 'aria-label': undefined },
+];
+
 ---
 
-<MarkdownPostLayout frontmatter={post.data} headings={headings} slug={slug}>
+<Layout frontmatter={post.data} headings={headings} slug={slug} breadcrumb={breadcrumb}>
   <Content />
-</MarkdownPostLayout>
+</Layout>

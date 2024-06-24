@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import ListPosts from '@/components/ListPosts.astro';
 import { Container } from '@/components/index';
 
@@ -20,10 +20,19 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const { posts } = Astro.props;
+
+// page settings
+const title = `タグ: ${tag}`;
+const pageHeader = true;
+const breadcrumb = [
+  { label: 'タグ一覧', href: '/tags', 'aria-label': undefined },
+  { label: `タグ: ${tag}`, href: Astro.url.pathname, 'aria-label': undefined },
+];
+// page settings end
 ---
 
-<BaseLayout title={`${tag}のタグが付いた記事`}>
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
   <Container>
     <ListPosts posts={posts} layout='single' />
   </Container>
-</BaseLayout>
+</Layout>

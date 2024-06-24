@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { getPosts, getSinglePage } from '@/utils';
 import { Img, Picture } from 'astro-imagetools/components';
@@ -11,7 +11,7 @@ import Button from '@/components/Button.astro';
 // page settings
 
 const title = 'HOME';
-const slug = ['home', 'aaa'];
+const slug = ['home'];
 const pageHeader = false;
 
 // page settings end
@@ -52,7 +52,7 @@ const contact = [
 ];
 ---
 
-<BaseLayout title={title} pageHeader={pageHeader} slug={slug}>
+<Layout title={title} pageHeader={pageHeader} slug={slug}>
   <section class='kv'>
     <div class='kv__inner'>
       <div class='kv__bg'>
@@ -111,7 +111,7 @@ const contact = [
     </div>
   </section>
 
-  <!-- JS で ホバー状態を維持させる -->
+  <!-- TODO JS で ホバー状態を維持させる -->
   <section class='business'>
     <div class='business__inner wrap'>
       <div class='business__headline'>
@@ -135,7 +135,7 @@ const contact = [
     </div>
   </section>
 
-  <!-- recommend__card をコンポーネント化 -->
+  <!-- TODO recommend__card をコンポーネント化 -->
   <section class='recommend'>
     <div class='recommend__inner'>
       <div class='recommend__bg'>
@@ -253,7 +253,7 @@ const contact = [
       </Container>
     </div>
   </section>
-</BaseLayout>
+</Layout>
 
 <style lang='scss'>
   @use '/src/scss/variables/_index' as *;

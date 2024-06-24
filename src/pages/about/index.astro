@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import { Img } from 'astro-imagetools/components';
 import Heading from '@/components/Heading.astro';
 import { Container } from '@/components/index';
@@ -7,11 +7,12 @@ import { Container } from '@/components/index';
 // page settings
 const title = 'About Us';
 const pageHeader = true;
+const breadcrumb = [{ label: '私たちについて', href: '/about', 'aria-label': undefined }];
 
 // page settings end
 ---
 
-<BaseLayout title={title} pageHeader={pageHeader}>
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
   <section class='about'>
     <Container>
       <div class='about__intro'>
@@ -141,4 +142,4 @@ const pageHeader = true;
       }
     }
   </style>
-</BaseLayout>
+</Layout>

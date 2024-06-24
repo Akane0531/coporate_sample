@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import BlogPost from '../../components/BlogPost.astro';
 const allPosts = await getCollection('posts');
 const pageTitle = '私のAstro学習ブログ';
 ---
 
-<BaseLayout title={pageTitle}>
+<Layout title={pageTitle}>
   <main>
     <h1>BLOG</h1>
     <ul>
@@ -19,4 +19,4 @@ const pageTitle = '私のAstro学習ブログ';
       }
     </ul>
   </main>
-</BaseLayout>
+</Layout>

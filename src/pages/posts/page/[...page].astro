@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import { type CollectionEntry } from 'astro:content';
 import { getPosts, getCategories } from '@/utils';
 import { siteConfig } from '@/data/site.config';
@@ -26,6 +26,7 @@ type Props = {
 const title = 'Posts';
 const pageHeader = true;
 const slug = ['posts', 'archive'];
+const breadcrumb = [{ label: 'お知らせ', href: '/about', 'aria-label': undefined }];
 
 // page settings end
 
@@ -34,16 +35,16 @@ const { page } = Astro.props;
 const posts = page.data;
 ---
 
-<BaseLayout title={title} pageHeader={pageHeader} slug={slug}>
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
   <div class='wrap'>
     <dl class='categories'>
       <dt>カテゴリー:</dt>
       <dd>
         {
-          categories.map((category: string) => (
+          categories.map(({ name }) => (
             <>
-              <a href={`/categories/${category}`}>
-                <Chip variant='wave' label={category} />
+              <a href={`/categories/${name}`}>
+                <Chip variant='wave' label={name} />
               </a>
             </>
           ))
@@ -53,7 +54,7 @@ const posts = page.data;
     <ListPosts posts={posts} layout='single' />
     <Pagination page={page} />
   </div>
-</BaseLayout>
+</Layout>
 
 <style lang='scss'>
   .wrap {
