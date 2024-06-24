@@ -1,4 +1,8 @@
 ---
+/*
+階層は2まで。
+TOCのような構造にしても良いかも。
+*/
 const { class: className, ...rest } = Astro.props;
 
 const paths = [
@@ -13,22 +17,46 @@ const paths = [
   {
     label: 'Posts',
     href: '/posts/page/',
-  },
-  {
-    label: 'Tags',
-    href: '/tags/',
+    hasChildren: true,
+    children: [
+      {
+        label: 'Tags',
+        href: '/tags/',
+      },
+      {
+        label: 'Categories',
+        href: '/categories/',
+      },
+    ],
   },
 ];
 ---
 
 <ul class={className} {...rest}>
   {
-    paths.map((path) => (
-      <li {...rest}>
-        <a href={path.href} {...rest}>
-          {path.label}
-        </a>
-      </li>
-    ))
+    paths.map((path) =>
+      path.hasChildren ? (
+        <li class='has_child' {...rest}>
+          <a href={path.href} {...rest}>
+            {path.label}
+          </a>
+          <ul class='child' {...rest}>
+            {path.children.map((childPath) => (
+              <li {...rest}>
+                <a href={childPath.href} {...rest}>
+                  {childPath.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ) : (
+        <li {...rest}>
+          <a href={path.href} {...rest}>
+            {path.label}
+          </a>
+        </li>
+      )
+    )
   }
 </ul>

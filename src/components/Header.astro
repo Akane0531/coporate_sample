@@ -67,6 +67,25 @@ import Button from '@/components/Button.astro';
       display: flex;
       align-items: center;
       gap: 30px;
+      a {
+        display: inline-block;
+        padding: 6px;
+      }
+      .has_child {
+        position: relative;
+        &:not(:hover) .child {
+          opacity: 0;
+        }
+      }
+      .child {
+        position: absolute;
+        display: grid;
+        gap: 8px;
+        padding: 16px 0;
+        min-width: 180px;
+        @include font-size(14px);
+        transition: 0.3s;
+      }
     }
     &__sp_menu {
       position: fixed;
