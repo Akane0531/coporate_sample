@@ -4,7 +4,7 @@ import Logo from '@/components/Logo.astro';
 import Button from '@/components/Button.astro';
 ---
 
-<header class='global_nav fixed top-0 z-20 w-full'>
+<div class='global_nav fixed top-0 z-20 w-full'>
   <div class='global_nav__inner'>
     <div class='global_nav__logo'>
       <Logo icon='#60e1e0' type='#28241d' />
@@ -23,7 +23,8 @@ import Button from '@/components/Button.astro';
       </div>
     </div>
   </div>
-</header>
+</div>
+
 <div class='global_nav__sp_menu block lg:hidden'>
   <nav class='global_nav__menu_inner'>
     <Navigation class='global_nav__link global_nav__link--sp' />
