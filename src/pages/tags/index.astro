@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 
 import BaseLayout from '@/layouts/BaseLayout';
 import { Container } from '@/components/index';
+import Chip from '@/components/Chip.astro';
 
 const pageTitle = 'tags';
 
@@ -15,24 +16,30 @@ const tags = [...new Set(allPosts.map((post: { data: { tags: any } }) => post.da
     <div class='tags'>
       {
         tags.map((tag) => (
-          <p class='tag'>
-            <a href={`/tags/${tag}`}>{tag}</a>
-          </p>
+          <li class='inline-block'>
+            <a href={`/tags/${tag}`}>
+              {' '}
+              <Chip label={tag}>
+                <span class='tags__count'>1</span>
+              </Chip>
+            </a>
+          </li>
         ))
       }
     </div>
   </Container>
 </BaseLayout>
 
-<style>
-  a {
-    color: #00539f;
-  }
-
+<style lang='scss'>
   .tags {
-    display: flex;
-    flex-wrap: wrap;
-  }
+    &__count {
+      background-color: rgba(#fff, 0.2);
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin: 0 0 0 0.5em;
+      line-height: 1;
+    }
 
   .tag {
     margin: 0.25em;
