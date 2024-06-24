@@ -2,8 +2,19 @@ import { getCollection, type CollectionEntry, type CollectionKey } from 'astro:c
 
 export const getCategories = async () => {
   const posts = await getCollection('posts');
-  const categories = new Set(posts.map((post) => post.data.category));
-  return Array.from(categories);
+  const categories = new Map();
+
+  posts.forEach((post) => {
+    const category = post.data.category;
+
+    if (categories.has(category)) {
+      categories.set(category, categories.get(category) + 1);
+    } else {
+      categories.set(category, 1);
+    }
+  });
+
+  return Array.from(categories, ([name, count]) => ({ name, count }));
 };
 
 export const getTags = async () => {
