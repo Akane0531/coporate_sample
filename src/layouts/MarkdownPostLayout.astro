@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout';
+import Layout from '@/layouts/BaseLayout';
 import { getCategories, getTags, getRelatedPosts } from '@/utils';
 import { encodeBase64 } from '@/utils';
 
@@ -8,86 +8,88 @@ import FormattedDate from '@/components/FormattedDate.astro';
 import Chip from '@/components/Chip.astro';
 import TOC from '@/components/TableOfContents.astro';
 
-const { frontmatter, headings, slug } = Astro.props;
+const { frontmatter, headings, slug, breadcrumb } = Astro.props;
 const categories = await getCategories();
 const Tags = await getTags();
 const relatedPosts = await getRelatedPosts(slug);
 ---
 
-<BaseLayout title={frontmatter.title}>
-  <article class='post wrap'>
-    <main>
-      <header>
-        <div transition:name={'img-' + encodeBase64(frontmatter.title)}>
-          <Img src={frontmatter.image.url} alt={frontmatter.image.alt || frontmatter.title} />
-        </div>
-        <h2 transition:name={'title-' + encodeBase64(frontmatter.title)}>{frontmatter.title}</h2>
-        <p>投稿日: <FormattedDate date={frontmatter.pubDate} /></p>
-        <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
-        <p><em>{frontmatter.description}</em></p>
-        <dl class='tags'>
-          <dt>タグ:</dt>
-          <dd>
-            {
-              frontmatter.tags.map((tag: string) => (
-                <a href={`/tags/${tag}`}>
-                  <Chip variant='outlined' size='small' label={tag} />
-                </a>
-              ))
-            }
-          </dd>
-        </dl>
-      </header>
-      <div class='post__contents'>
-        <div class='prose lg:prose-lg prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl mx-auto'>
-          <slot />
-        </div>
+<Layout title={frontmatter.title} breadcrumb={breadcrumb}>
+  <article class='post'>
+    <header>
+      <div transition:name={'img-' + encodeBase64(frontmatter.title)}>
+        <Img src={frontmatter.image.url} alt={frontmatter.image.alt || frontmatter.title} />
       </div>
-      <footer>
-        <nav class='footerPosts'>
-          <div class='footerPosts__inner'>
-            <div class='footerPosts__link footerPosts__link--prev'>
-              {
-                relatedPosts.prev && (
-                  <>
-                    <p>前の記事</p>
-                    <a href={`/posts/${relatedPosts.prev.slug}`}>{relatedPosts.prev.data.title}</a>
-                  </>
-                )
-              }
-            </div>
-            <a class='footerPosts__link footerPosts__link--archive' href='/posts/page/'></a>
-            <div class='footerPosts__link footerPosts__link--next'>
-              {
-                relatedPosts.next && (
-                  <>
-                    <p>次の記事</p>
-                    <a href={`/posts/${relatedPosts.next.slug}`}>{relatedPosts.next.data.title}</a>
-                  </>
-                )
-              }
-            </div>
-          </div>
-        </nav>
-      </footer>
-    </main>
-    <aside>
-      <dl class='categories'>
-        <dt>Category</dt>
-        {
-          categories.map((category: string) => (
-            <dd>
-              <a href={`/categories/${category}`}>{category}</a>
-            </dd>
-          ))
-        }
+      <h2 transition:name={'title-' + encodeBase64(frontmatter.title)}>{frontmatter.title}</h2>
+      <p>投稿日: <FormattedDate date={frontmatter.pubDate} /></p>
+      <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
+      <p><em>{frontmatter.description}</em></p>
+      <dl class='tags'>
+        <dt>タグ:</dt>
+        <dd>
+          {
+            frontmatter.tags.map((tag: string) => (
+              <a href={`/tags/${tag}`}>
+                <Chip variant='outlined' size='small' label={tag} />
+              </a>
+            ))
+          }
+        </dd>
       </dl>
-      <div class='toc'>
-        <TOC headings={headings} />
+    </header>
+    <div class='post__contents'>
+      <div class='prose lg:prose-lg prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl mx-auto'>
+        <slot />
       </div>
-    </aside>
+    </div>
+    <footer>
+      <nav class='footerPosts'>
+        <div class='footerPosts__inner'>
+          <div class='footerPosts__link footerPosts__link--prev'>
+            {
+              relatedPosts.prev && (
+                <>
+                  <p>前の記事</p>
+                  <a href={`/posts/${relatedPosts.prev.slug}`}>{relatedPosts.prev.data.title}</a>
+                </>
+              )
+            }
+          </div>
+          <a class='footerPosts__link footerPosts__link--archive' href='/posts/page/'></a>
+          <div class='footerPosts__link footerPosts__link--next'>
+            {
+              relatedPosts.next && (
+                <>
+                  <p>次の記事</p>
+                  <a href={`/posts/${relatedPosts.next.slug}`}>{relatedPosts.next.data.title}</a>
+                </>
+              )
+            }
+          </div>
+        </div>
+      </nav>
+    </footer>
   </article>
-</BaseLayout>
+
+  <Fragment slot='sidebar'>
+    <dl class='categories'>
+      <dt>Category</dt>
+      {
+        categories.map(({ name, count }) => (
+          <dd>
+            <a class='categories__link' href={`/categories/${name}`}>
+              {name}
+            </a>
+            <span class='categories__count'>{count}</span>
+          </dd>
+        ))
+      }
+    </dl>
+    <div class='toc'>
+      <TOC headings={headings} />
+    </div>
+  </Fragment>
+</Layout>
 
 <style lang='scss'>
   @use '/src/scss/variables/_index' as *;
@@ -95,22 +97,15 @@ const relatedPosts = await getRelatedPosts(slug);
   @use '/src/scss/modules/_rfs' as *;
 
   .post {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    @include md {
-      flex-direction: column;
-    }
-    &__contents {
-      margin: 64px 0 0;
-    }
-  }
-  main {
     max-width: 660px;
     flex-shrink: 0;
     @include md {
       max-width: unset;
     }
+    &__contents {
+      margin: 64px 0 0;
+    }
+
     header {
       display: grid;
       gap: 16px;
@@ -122,13 +117,6 @@ const relatedPosts = await getRelatedPosts(slug);
     }
   }
 
-  aside {
-    width: 100%;
-    max-width: 320px;
-    @include md {
-      max-width: unset;
-    }
-  }
   .footerPosts {
     &__inner {
       display: flex;
@@ -186,6 +174,35 @@ const relatedPosts = await getRelatedPosts(slug);
     }
   }
   .categories {
+    &__count {
+      flex-shrink: 0;
+      background-color: $primary;
+      color: $base;
+      width: 32px;
+      border-radius: 6px;
+      display: grid;
+      place-content: center;
+      place-items: center;
+    }
+    &__link {
+      display: block;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      &:hover {
+        color: $primary;
+      }
+      &::before {
+        content: '';
+        width: 9px;
+        height: 9px;
+        background-color: $weak;
+        flex-shrink: 0;
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+      }
+    }
+
     dt {
       font-family: $font-display;
       font-weight: bold;
@@ -194,23 +211,12 @@ const relatedPosts = await getRelatedPosts(slug);
       @include font-size(24px);
     }
     dd {
-      a {
-        border-bottom: solid 1px $primary;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 8px;
-        margin: 16px 0 0;
-        &::before {
-          content: '';
-          width: 9px;
-          height: 9px;
-          background-color: $weak;
-          flex-shrink: 0;
-          clip-path: polygon(0 0, 100% 50%, 0 100%);
-        }
-      }
+      display: grid;
+      grid-template-columns: 1fr 32px;
+      align-items: center;
+      border-bottom: solid 1px $primary;
+      padding: 8px;
+      margin: 16px 0 0;
     }
   }
 </style>
