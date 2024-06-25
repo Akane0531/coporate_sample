@@ -7,7 +7,7 @@ import Button from '@/components/Button.astro';
 <div class='global_nav fixed top-0 z-20 w-full'>
   <div class='global_nav__inner'>
     <div class='global_nav__logo'>
-      <Logo icon='#60e1e0' type='#28241d' />
+      <Logo />
     </div>
     <div class='hidden lg:block'>
       <nav class='global_nav__menu'>
@@ -62,6 +62,12 @@ import Button from '@/components/Button.astro';
       width: 260px;
       @include md {
         width: 160px;
+      }
+      &.is_white {
+        .icon,
+        .type {
+          fill: #fff;
+        }
       }
     }
     &__menu {
@@ -148,7 +154,7 @@ import Button from '@/components/Button.astro';
 </style>
 
 <script>
-  import { scrollTrigger } from '../scripts/index';
+  import { resetStates, scrollTrigger } from '../scripts/index';
 
   const menuToggle = {
     targets: null as NodeList | null,
@@ -256,10 +262,56 @@ import Button from '@/components/Button.astro';
     },
   };
 
+  // 重なる要素に合わせてロゴの色を変える
+  const logoColorToggle = {
+    scrollEvents: new Map(), // イベントの重複を回避
+
+    init() {
+      // on_white クラスで制御
+      const elements = document.querySelectorAll('.page_header');
+
+      const callbacks = {
+        isEnter: () => this.logoAnimation(true),
+        isEnterBack: () => this.logoAnimation(false),
+        isLeave: () => this.logoAnimation(false),
+        isLeaveBack: () => this.logoAnimation(true),
+      };
+
+      // イベントの重複を回避
+      this.scrollEvents.forEach((handler, element) => {
+        window.removeEventListener('scroll', handler);
+      });
+      this.scrollEvents.clear();
+
+      elements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          const handler = () => scrollTrigger(element, callbacks);
+          this.scrollEvents.set(element, handler);
+
+          scrollTrigger(element, callbacks);
+          window.addEventListener('scroll', handler);
+        }
+      });
+    },
+
+    logoAnimation(boolean = true) {
+      document.querySelectorAll('.global_nav__logo').forEach((target) => {
+        if (boolean) {
+          target.classList.add('is_white');
+        } else {
+          target.classList.remove('is_white');
+        }
+      });
+    },
+  };
+
   menuToggle.init();
   menuColorToggle.init();
+  logoColorToggle.init();
+
   document.addEventListener('astro:after-swap', () => {
     menuToggle.init();
     menuColorToggle.init();
+    logoColorToggle.init();
   });
 </script>
