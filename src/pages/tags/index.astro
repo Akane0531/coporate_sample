@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getTags } from '@/utils';
 
 import Layout from '@/layouts/BaseLayout';
 import { Container } from '@/components/index';
@@ -11,20 +11,19 @@ const pageHeader = true;
 const breadcrumb = [{ label: 'タグ一覧', href: '/tags', 'aria-label': undefined }];
 // page settings end
 
-const allPosts = await getCollection('posts');
-const tags = [...new Set(allPosts.map((post: { data: { tags: any } }) => post.data.tags).flat())];
+const tags = await getTags();
 ---
 
 <Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
   <Container size='md'>
     <ul class='tags flex flex-wrap gap-y-4 gap-x-2'>
       {
-        tags.map((tag) => (
+        tags.map(({ name, count }) => (
           <li class='inline-block'>
-            <a href={`/tags/${tag}`}>
+            <a href={`/tags/${name}`}>
               {' '}
-              <Chip label={tag}>
-                <span class='tags__count'>1</span>
+              <Chip label={name}>
+                <span class='tags__count'>{count}</span>
               </Chip>
             </a>
           </li>

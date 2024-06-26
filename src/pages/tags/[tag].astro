@@ -11,6 +11,7 @@ export async function getStaticPaths() {
 
   return uniqueTags.map((tag) => {
     const filteredPosts = allPosts.filter((post) => post.data.tags.includes(tag));
+    filteredPosts.sort((a, b) => (a.data.pubDate < b.data.pubDate ? 1 : -1)); // 日付の降順
     return {
       params: { tag },
       props: { posts: filteredPosts },

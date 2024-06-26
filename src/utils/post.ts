@@ -19,8 +19,19 @@ export const getCategories = async () => {
 
 export const getTags = async () => {
   const posts = await getCollection('posts');
-  const uniqueTags = new Set(posts.map((post) => post.data.tags).flat());
-  return Array.from(uniqueTags);
+  const tags = new Map();
+  posts.forEach((post) => {
+    const currentTags = post.data.tags;
+    currentTags.forEach((tag) => {
+      if (tags.has(tag)) {
+        tags.set(tag, tags.get(tag) + 1);
+      } else {
+        tags.set(tag, 1);
+      }
+    });
+  });
+
+  return Array.from(tags, ([name, count]) => ({ name, count }));
 };
 
 export const getPosts = async (max?: number) => {
