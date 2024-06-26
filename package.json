@@ -29,6 +29,7 @@
     "@tailwindcss/typography": "^0.5.13",
     "@types/node": "^20.12.12",
     "astro-imagetools": "^0.9.0",
+    "marked": "^13.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rfs": "^10.0.0",
