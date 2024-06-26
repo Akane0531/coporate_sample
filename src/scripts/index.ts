@@ -1,1 +1,1 @@
-export { scrollTrigger } from './scroll';
+export { resetStates, scrollTrigger } from './scroll';
