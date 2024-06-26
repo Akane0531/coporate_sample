@@ -1,0 +1,251 @@
+---
+import Layout from '@/layouts/BaseLayout';
+import { getCategories, getTags, getRelatedPosts } from '@/utils';
+import { encodeBase64 } from '@/utils';
+
+import { Img } from 'astro-imagetools/components';
+import FormattedDate from '@/components/FormattedDate.astro';
+import Chip from '@/components/Chip.astro';
+import TOC from '@/components/TableOfContents.astro';
+
+const { frontmatter, headings, slug, breadcrumb } = Astro.props;
+const categories = await getCategories();
+const Tags = await getTags();
+const relatedPosts = await getRelatedPosts(slug);
+---
+
+<Layout title={frontmatter.title} breadcrumb={breadcrumb}>
+  <article class='post'>
+    <header>
+      <div transition:name={'img-' + encodeBase64(frontmatter.title)}>
+        <Img src={frontmatter.image.url} alt={frontmatter.image.alt || frontmatter.title} />
+      </div>
+      <h2 transition:name={'title-' + encodeBase64(frontmatter.title)}>{frontmatter.title}</h2>
+      <p>投稿日: <FormattedDate date={frontmatter.pubDate} /></p>
+      <p>著者 by: <a href='/about/'>{frontmatter.author}</a></p>
+      <p><em>{frontmatter.description}</em></p>
+      <dl class='tags'>
+        <dt>タグ:</dt>
+        <dd>
+          {
+            frontmatter.tags.map((tag: string) => (
+              <a href={`/tags/${tag}`}>
+                <Chip variant='outlined' size='small' label={tag} />
+              </a>
+            ))
+          }
+        </dd>
+      </dl>
+    </header>
+    <div class='post__contents'>
+      <div class='prose lg:prose-lg prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl mx-auto'>
+        <slot />
+      </div>
+    </div>
+    <footer>
+      <nav class='footerPosts'>
+        <div class='footerPosts__inner'>
+          <div class='footerPosts__link footerPosts__link--prev'>
+            {
+              relatedPosts.prev && (
+                <>
+                  <p>前の記事</p>
+                  <a href={`/posts/${relatedPosts.prev.slug}`}>{relatedPosts.prev.data.title}</a>
+                </>
+              )
+            }
+          </div>
+          <a class='footerPosts__link footerPosts__link--archive' href='/posts/page/'></a>
+          <div class='footerPosts__link footerPosts__link--next'>
+            {
+              relatedPosts.next && (
+                <>
+                  <p>次の記事</p>
+                  <a href={`/posts/${relatedPosts.next.slug}`}>{relatedPosts.next.data.title}</a>
+                </>
+              )
+            }
+          </div>
+        </div>
+      </nav>
+    </footer>
+  </article>
+
+  <Fragment slot='sidebar'>
+    <dl class='categories'>
+      <dt>Category</dt>
+      {
+        categories.map(({ name, count }) => (
+          <dd>
+            <a class='categories__link' href={`/categories/${name}`}>
+              {name}
+            </a>
+            <span class='categories__count'>{count}</span>
+          </dd>
+        ))
+      }
+    </dl>
+    <div class='toc'>
+      <TOC headings={headings} />
+    </div>
+  </Fragment>
+</Layout>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  .post {
+    max-width: 660px;
+    flex-shrink: 0;
+    @include md {
+      max-width: unset;
+    }
+    &__contents {
+      margin: 64px 0 0;
+    }
+
+    header {
+      display: grid;
+      gap: 16px;
+    }
+    footer {
+      margin: 80px 0 0;
+      padding: 40px 0;
+      border-top: solid 1px $weak;
+    }
+  }
+
+  .footerPosts {
+    &__inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+    }
+    &__link {
+      display: flex;
+      flex-direction: column;
+      min-width: 120px;
+      @include font-size(14px);
+      &--prev {
+        align-items: flex-start;
+      }
+      &--next {
+        align-items: flex-end;
+      }
+
+      &--archive {
+        justify-content: center;
+        align-items: center;
+
+        padding: 0 16px;
+        &::before {
+          content: '';
+          width: 15px;
+          height: 15px;
+          display: inline-block;
+          vertical-align: bottom;
+          background-color: $accent;
+          mask-size: contain;
+          mask-position: center;
+          mask-repeat: no-repeat;
+          mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNSAxNSI+CiAgPGNpcmNsZSBjeD0iMS41IiBjeT0iMS41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI3LjUiIGN5PSIxLjUiIHI9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEuNSIgY3k9IjcuNSIgcj0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iNy41IiBjeT0iNy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxMy41IiBjeT0iNy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxLjUiIGN5PSIxMy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI3LjUiIGN5PSIxMy41IiByPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxMy41IiBjeT0iMTMuNSIgcj0iMS41Ii8+Cjwvc3ZnPg==');
+        }
+      }
+    }
+  }
+  .toc {
+    position: sticky;
+    margin: 80px 0 0;
+    top: 40px;
+  }
+  .tags {
+    display: flex;
+    gap: 30px;
+    dt {
+      flex-shrink: 0;
+    }
+    dd {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+  }
+  .categories {
+    &__count {
+      flex-shrink: 0;
+      background-color: $primary;
+      color: $base;
+      width: 32px;
+      border-radius: 6px;
+      display: grid;
+      place-content: center;
+      place-items: center;
+    }
+    &__link {
+      display: block;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      &:hover {
+        color: $primary;
+      }
+      &::before {
+        content: '';
+        width: 9px;
+        height: 9px;
+        background-color: $weak;
+        flex-shrink: 0;
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+      }
+    }
+
+    dt {
+      font-family: $font-display;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      @include font-size(24px);
+    }
+    dd {
+      display: grid;
+      grid-template-columns: 1fr 32px;
+      align-items: center;
+      border-bottom: solid 1px $primary;
+      padding: 8px;
+      margin: 16px 0 0;
+    }
+  }
+</style>
+
+<script>
+  const fnObserver = () => {
+    const option = { root: null, rootMargin: '0px 0px 0px', threshold: 1 };
+    const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6');
+    const observer = new IntersectionObserver((entries) => callback(entries), option);
+
+    headings.forEach((heading) => {
+      observer.observe(heading);
+    });
+
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute('id');
+        const targets = document.querySelectorAll(`.toc a[href="#${id}"]`);
+        targets.forEach((target) => {
+          const parentElement = target.parentElement;
+          if (entry.isIntersecting) {
+            parentElement?.classList.add('is_active');
+          } else {
+            parentElement?.classList.remove('is_active');
+          }
+        });
+      });
+    };
+  };
+  fnObserver();
+  document.addEventListener('astro:after-swap', fnObserver);
+</script>

@@ -1,0 +1,75 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+interface Props {
+  label: string;
+  variant?: 'default' | 'outlined' | 'wave';
+  size?: 'default' | 'small' | 'large';
+  className?: string;
+}
+
+const { label, variant = 'default', size = 'default', className } = Astro.props;
+
+const baseStyle = 'inline-block py-1 px-4 font-display font-bold rounded-sm transiton duration-200';
+
+const baseStyles = {
+  default: '',
+  small: 'text-sm font-normal px-2',
+  large: 'py-2 px-4',
+};
+
+const styles = {
+  default: ' text-white bg-primary-400 hover:bg-primary-500',
+  outlined: 'border border-primary-400 text-primary-400 hover:bg-primary-400 hover:text-white',
+  wave: 'wave relative',
+};
+
+const style = styles[variant] ? styles[variant] : styles.default;
+const renderBaseStyle = baseStyles[size] ? twMerge(baseStyle, baseStyles[size]) : baseStyle;
+const mergedStyles = twMerge(renderBaseStyle, style);
+---
+
+<div class={twMerge(mergedStyles, className)}>
+  <span>{label}</span>
+  <slot />
+</div>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+
+  .wave {
+    background-image: linear-gradient(rgba($primary, 0), rgba($primary, 0)), url('/wave_bg_01.jpg');
+    background-size: 100%;
+    background-position: center;
+    color: transparent;
+    transition: 0.3s;
+    &::before {
+      content: '';
+      z-index: 0;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 3px);
+      height: calc(100% - 3px);
+      background-color: #fff;
+      transition: 0.3s;
+    }
+    &:hover {
+      color: #fff;
+      background-image: linear-gradient(rgba($primary, 0.8), rgba($primary, 0.8)), url('/wave_bg_01.jpg');
+      background-size: 120%;
+      &::before {
+        opacity: 0;
+      }
+    }
+    span {
+      position: relative;
+      display: inline-block;
+      background-clip: text;
+      color: currentColor;
+      background-image: linear-gradient(rgba($primary, 0.9), rgba($primary, 0.9)), url('/wave_bg_01.jpg');
+      background-size: 100%, cover;
+    }
+  }
+</style>

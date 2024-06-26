@@ -1,0 +1,30 @@
+---
+const { heading, class: className, ...rest } = Astro.props;
+
+type Heading = {
+  depth: number;
+  text: string;
+  slug: string;
+  subheadings: Heading[];
+};
+
+export interface Props {
+  heading: Heading;
+  class?: string;
+}
+---
+
+<li class={className} {...rest}>
+  <a href={'#' + heading.slug} {...rest}>
+    {heading.text}
+  </a>
+  {
+    heading.subheadings.length > 0 && (
+      <ul class='ml-4'>
+        {heading.subheadings.map((subheading) => (
+          <Astro.self heading={subheading} class={className} {...rest} />
+        ))}
+      </ul>
+    )
+  }
+</li>

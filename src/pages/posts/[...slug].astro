@@ -1,0 +1,29 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+
+import Layout from '../../layouts/MarkdownPostLayout.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('posts');
+
+  return blogEntries.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+type Props = CollectionEntry<'posts'>;
+
+const { slug } = Astro.params;
+const post = Astro.props;
+const { Content, headings } = await post.render();
+
+const breadcrumb = [
+  { label: 'お知らせ', href: '/posts/page', 'aria-label': undefined },
+  { label: post.data.title, href: Astro.url.pathname, 'aria-label': undefined },
+];
+
+---
+
+<Layout frontmatter={post.data} headings={headings} slug={slug} breadcrumb={breadcrumb}>
+  <Content />
+</Layout>

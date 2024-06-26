@@ -1,0 +1,334 @@
+---
+import Navigation from '@/components//Navigation.astro';
+import Logo from '@/components/Logo.astro';
+import Button from '@/components/Button.astro';
+---
+
+<div class='global_nav fixed top-0 z-20 w-full'>
+  <div class='global_nav__inner'>
+    <div class='global_nav__logo'>
+      <Logo />
+    </div>
+    <div class='hidden lg:block'>
+      <nav class='global_nav__menu'>
+        <Navigation class='global_nav__link global_nav__link--lg' />
+        <Button href='/about/' size='small' icon={false}>Contact</Button>
+      </nav>
+    </div>
+    <div class='block lg:hidden'>
+      <div class='global_nav__hamburger'>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='global_nav__sp_menu block lg:hidden'>
+  <nav class='global_nav__menu_inner'>
+    <Navigation class='global_nav__link global_nav__link--sp' name='footer' />
+  </nav>
+</div>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  @use 'sass:math';
+
+  .global_nav {
+    &.is_active {
+      padding-right: var(--scrollBarWidth);
+    }
+    &.is_white {
+      &,
+      a {
+        color: $base;
+      }
+    }
+
+    &.is_active.is_white {
+      .global_nav__hamburger {
+        color: $text;
+      }
+    }
+
+    &__inner {
+      margin-inline: unquote('max(2rem, ((100% - #{$xl}) / 2))');
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      padding: 18px 0;
+    }
+    &__logo {
+      flex-shrink: 0;
+      width: 260px;
+      @include md {
+        width: 160px;
+      }
+      &.is_white {
+        .icon,
+        .type {
+          fill: #fff;
+        }
+      }
+    }
+    &__menu {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      a {
+        display: inline-block;
+        padding: 6px;
+      }
+      .has_child {
+        position: relative;
+        &:not(:hover) .child {
+          opacity: 0;
+        }
+      }
+      .child {
+        position: absolute;
+        display: grid;
+        gap: 8px;
+        padding: 16px 0;
+        min-width: 180px;
+        @include font-size(14px);
+        transition: 0.3s;
+      }
+    }
+    &__sp_menu {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      &:not(.is_active) {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+    &__menu_inner {
+      background-color: #fff;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-content: center;
+      place-items: center;
+    }
+    &__link {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      text-transform: uppercase;
+      font-weight: bold;
+      @include font-size(18px);
+      &--lg {
+      }
+      &--sp {
+        flex-direction: column;
+        .has_child,
+        .child {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .child {
+          @include font-size(14px);
+        }
+      }
+    }
+
+    &__hamburger {
+      width: 32px;
+      height: 16px;
+      position: relative;
+      cursor: pointer;
+
+      span {
+        position: absolute;
+        width: 100%;
+        height: 0;
+        border-top: solid 1px currentColor;
+        background-color: currentColor;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        &:nth-child(1) {
+          top: 0;
+        }
+        &:nth-child(2) {
+          top: 50%;
+        }
+        &:nth-child(3) {
+          bottom: 0;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+  import { resetStates, scrollTrigger } from '../scripts/index';
+
+  const menuToggle = {
+    targets: null as NodeList | null,
+    toggleButton: null as HTMLElement | null,
+    isMenuOpen: false,
+
+    init() {
+      this.toggleButton = document.querySelector('.global_nav__hamburger');
+      this.targets = document.querySelectorAll('.global_nav, .global_nav__sp_menu');
+
+      this.toggleButton?.addEventListener('click', () => {
+        if (!this.toggleButton || !this.targets) {
+          return;
+        }
+
+        this.isMenuOpen = !this.isMenuOpen;
+        document.body.classList.toggle('menu_active');
+        document.documentElement.style.setProperty('--scrollBarWidth', this.getScrollbarWidth() + 'px');
+        this.scrollingBlock(this.isMenuOpen);
+
+        if (this.isMenuOpen) {
+          this.targets?.forEach((target) => {
+            (target as Element).classList.add('is_active');
+          });
+        } else {
+          this.targets?.forEach((target) => {
+            (target as Element).classList.remove('is_active');
+          });
+        }
+      });
+    },
+
+    scrollingBlock(boolean: boolean) {
+      if (boolean) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+      return;
+    },
+
+    getScrollbarWidth() {
+      const outer = document.createElement('div');
+      outer.style.visibility = 'hidden';
+      outer.style.width = '100px';
+      document.body.appendChild(outer);
+
+      const widthNoScroll = outer.offsetWidth;
+      outer.style.overflow = 'scroll';
+
+      const inner = document.createElement('div');
+      inner.style.width = '100%';
+      outer.appendChild(inner);
+
+      const widthWithScroll = inner.offsetWidth;
+
+      if (outer.parentNode) {
+        outer.parentNode.removeChild(outer);
+      }
+
+      return widthNoScroll - widthWithScroll;
+    },
+  };
+
+  // 重なる要素に合わせてメニューバーの色を変える
+  const menuColorToggle = {
+    scrollEvents: new Map(), // イベントの重複を回避
+
+    init() {
+      // on_white クラスで制御
+      const elements = document.querySelectorAll('.kv ,.recommend ,.page_header__inner');
+
+      const callbacks = {
+        isEnter: () => this.menuAnimation(true),
+        isEnterBack: () => this.menuAnimation(false),
+        isLeave: () => this.menuAnimation(false),
+        isLeaveBack: () => this.menuAnimation(true),
+      };
+
+      // イベントの重複を回避
+      this.scrollEvents.forEach((handler, element) => {
+        window.removeEventListener('scroll', handler);
+      });
+      this.scrollEvents.clear();
+
+      elements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          const handler = () => scrollTrigger(element, callbacks);
+          this.scrollEvents.set(element, handler);
+
+          scrollTrigger(element, callbacks);
+          window.addEventListener('scroll', handler);
+        }
+      });
+    },
+
+    menuAnimation(boolean = true) {
+      document.querySelectorAll('.global_nav').forEach((target) => {
+        if (boolean) {
+          target.classList.add('is_white');
+        } else {
+          target.classList.remove('is_white');
+        }
+      });
+    },
+  };
+
+  // 重なる要素に合わせてロゴの色を変える
+  const logoColorToggle = {
+    scrollEvents: new Map(), // イベントの重複を回避
+
+    init() {
+      // on_white クラスで制御
+      const elements = document.querySelectorAll('.page_header');
+
+      const callbacks = {
+        isEnter: () => this.logoAnimation(true),
+        isEnterBack: () => this.logoAnimation(false),
+        isLeave: () => this.logoAnimation(false),
+        isLeaveBack: () => this.logoAnimation(true),
+      };
+
+      // イベントの重複を回避
+      this.scrollEvents.forEach((handler, element) => {
+        window.removeEventListener('scroll', handler);
+      });
+      this.scrollEvents.clear();
+
+      elements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          const handler = () => scrollTrigger(element, callbacks);
+          this.scrollEvents.set(element, handler);
+
+          scrollTrigger(element, callbacks);
+          window.addEventListener('scroll', handler);
+        }
+      });
+    },
+
+    logoAnimation(boolean = true) {
+      document.querySelectorAll('.global_nav__logo').forEach((target) => {
+        if (boolean) {
+          target.classList.add('is_white');
+        } else {
+          target.classList.remove('is_white');
+        }
+      });
+    },
+  };
+
+  menuToggle.init();
+  menuColorToggle.init();
+  logoColorToggle.init();
+
+  document.addEventListener('astro:after-swap', () => {
+    menuToggle.init();
+    menuColorToggle.init();
+    logoColorToggle.init();
+  });
+</script>

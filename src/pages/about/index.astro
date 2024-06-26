@@ -1,0 +1,145 @@
+---
+import Layout from '@/layouts/BaseLayout';
+import { Img } from 'astro-imagetools/components';
+import Heading from '@/components/Heading.astro';
+import { Container } from '@/components/index';
+
+// page settings
+const title = 'About Us';
+const pageHeader = true;
+const breadcrumb = [{ label: '私たちについて', href: '/about', 'aria-label': undefined }];
+
+// page settings end
+---
+
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
+  <section class='about'>
+    <Container>
+      <div class='about__intro'>
+        <Heading title='私たちについて' caption='About Us' variant='left' />
+        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        <div class='about__intro_img'>
+          <Img src='/src/assets/about/about-01.jpg' alt='A local' layout='fill' />
+        </div>
+      </div>
+    </Container>
+    <div class='about__services'>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-01.jpg' alt='A local' />
+        </div>
+      </div>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-02.jpg' alt='A local' />
+        </div>
+      </div>
+      <div class='about__row'>
+        <div class='about__desc'>
+          <h3>title</h3>
+          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire,</p>
+        </div>
+        <div class='about__img'>
+          <Img src='/src/assets/about/about_slide-03.jpg' alt='A local' />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style lang='scss'>
+    @use '/src/scss/variables/_index' as *;
+    @use '/src/scss/base/_index' as *;
+    @use '/src/scss/modules/_rfs' as *;
+
+    .about {
+      &__intro {
+        display: grid;
+        gap: 24px;
+      }
+      &__intro_img {
+        overflow: hidden;
+        border-radius: 4px;
+      }
+      &__services {
+        margin: 120px 0 80px;
+        display: grid;
+        gap: 80px;
+        @include md {
+          gap: 40px;
+        }
+      }
+      &__row {
+        display: flex;
+        align-items: flex-end;
+        gap: 0 40px;
+
+        @include md {
+          align-items: flex-start;
+
+          flex-direction: column-reverse !important;
+        }
+
+        @include mdmin {
+          &:nth-of-type(odd) {
+            margin-inline-start: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+          }
+          &:nth-of-type(even) {
+            margin-inline-end: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+            flex-direction: row-reverse;
+          }
+        }
+      }
+      &__img {
+        padding: 0 0 40px;
+        @include md {
+          padding: 0;
+          margin-inline-start: unquote('max(2rem, ((100% - #{$lg}) / 2))');
+        }
+      }
+      &__desc {
+        display: grid;
+        gap: 16px;
+        max-width: 420px;
+        position: relative;
+        margin: 60px 0 0;
+        padding: 40px;
+        @include md {
+          width: calc(100% - 80px);
+          padding: 64px 24px;
+          margin: -40px 0 0;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: calc(100% + 160px);
+          background-color: $bg;
+          @include md {
+            width: 100%;
+          }
+        }
+        @include md {
+          max-width: unset;
+        }
+      }
+      &__row:nth-of-type(even) &__desc {
+        &::before {
+          left: unset;
+          right: 0;
+        }
+      }
+    }
+  </style>
+</Layout>

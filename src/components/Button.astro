@@ -1,0 +1,90 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+type Props = {
+  href: string;
+  target?: string;
+  rel?: string;
+  size?: 'default' | 'small';
+  variant?: 'default' | 'outlined';
+  icon?: boolean;
+  attributes?: any;
+  className?: any;
+};
+
+type StyleKeys = keyof typeof baseStyle;
+
+const { href, target, rel, size = 'default', variant = 'default', icon = true, attributes, className = {} } = Astro.props;
+
+const baseStyle = {
+  parent: 'btn font-display uppercase',
+  anchor: 'inline-flex gap-2 justify-center items-center',
+};
+
+const sizes = {
+  default: {
+    parent: '',
+    anchor: 'p-4 xs:min-w-[280px]',
+  },
+  small: {
+    parent: '',
+    anchor: 'py-2 px-4 xsx:min-w-[120px]',
+  },
+};
+
+const styles = {
+  default: {
+    parent: '',
+    anchor: ' bg-primary-300 text-white',
+  },
+  outlined: {
+    parent: '',
+    anchor: 'text-primary-400 border border-primary-400',
+  },
+};
+
+const mergedStyles = (Object.keys(baseStyle) as Array<StyleKeys>).reduce((acc: { [key: string]: string }, key) => {
+  acc[key] = twMerge(baseStyle[key], sizes[size][key]);
+  acc[key] = twMerge(acc[key], styles[variant][key]);
+  return acc;
+}, {});
+---
+
+<div class={twMerge(mergedStyles.parent, className.parent)}>
+  <a class={twMerge(mergedStyles.anchor, className.anchor)} href={href} target={target} rel={rel}>
+    <span class='w-full text-center'><slot /></span>
+    {icon && <i class='shrink-0' />}
+  </a>
+</div>
+
+<style lang='scss' scoped>
+  a {
+    letter-spacing: 0.18em;
+  }
+  i {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    &::before,
+    &::after {
+      content: '';
+    }
+    &::before {
+      width: 1px;
+      height: 24px;
+      display: block;
+      background-color: currentColor;
+    }
+    &::after {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+      background-color: currentColor;
+      mask-size: contain;
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMiAxMCI+PHBhdGggZD0iTTcuMzAxMDQuMTk4ODY5IDExLjc5MzMgNC41MTk4OWMuMjc1Ni4yNjUxNi4yNzU2LjY5NTA2IDAgLjk2MDIyTDcuMzAxMDQgOS44MDExM2MtLjI3NTY2LjI2NTE3LS43MjI2LjI2NTE3LS45OTgyNiAwLS4yNzU2Ny0uMjY1MTYtLjI3NTY3LS42OTUwNyAwLS45NjAyMmwzLjI4NzE5LTMuMTYxOTNILjcwNTg4MkMuMzE2MDM0IDUuNjc4OTggMCA1LjM3NDk5IDAgNWMwLS4zNzQ5OS4zMTYwMzQtLjY3ODk4LjcwNTg4Mi0uNjc4OThIOS41ODk5N0w2LjMwMjc4IDEuMTU5MWMtLjI3NTY3LS4yNjUxNjQtLjI3NTY3LS42OTUwNzIgMC0uOTYwMjMxLjI3NTY2LS4yNjUxNTg4LjcyMjYtLjI2NTE1ODguOTk4MjYgMFoiIC8+PC9zdmc+');
+    }
+  }
+</style>

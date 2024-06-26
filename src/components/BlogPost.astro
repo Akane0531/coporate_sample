@@ -1,0 +1,26 @@
+---
+import { encodeBase64 } from '@/utils';
+
+const {
+  url,
+  data: { title, image },
+} = Astro.props;
+---
+
+<div>
+  <a href={url}>{title}</a>
+  <a href={url}>
+    <!-- <img src={image.url} transition:name={'img-' + encodeBase64(title)} /> -->
+  </a>
+  <h3>
+    <a href={url} transition:name={'title-' + encodeBase64(title)}>
+      {title}
+    </a>
+  </h3>
+</div>
+
+<style>
+  img {
+    max-width: 100%;
+  }
+</style>

@@ -1,0 +1,147 @@
+---
+import { Img } from 'astro-imagetools/components';
+import Navigation from '@/components/Navigation.astro';
+import Logo from '@/components/Logo.astro';
+---
+
+<footer>
+  <div class='footer'>
+    <div class='footer__inner'>
+      <div class='wrap'>
+        <div class='footer__bg'>
+          <Img src='/src/assets/footer_bg.jpg' alt='A local' layout='fill' />
+        </div>
+        <div class='footer__desc'>
+          <!-- Logo -->
+          <div class='footer__logo'>
+            <Logo icon='#fff' type='#fff' />
+          </div>
+          <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquid doloribus debitis</p>
+          <p class='footer__copyright'>Copyright © 2024 sample site All Rights Reserved.</p>
+        </div>
+        <nav class='footer__nav'>
+          <Navigation class='footer__links' />
+        </nav>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+  @use '/src/scss/modules/_rfs' as *;
+
+  @use 'sass:math';
+
+  .footer {
+    .wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 80px;
+      justify-content: space-between;
+      align-items: center;
+      @include md {
+        flex-direction: column-reverse;
+      }
+    }
+    &__inner {
+      position: relative;
+      margin: 80px 0 0;
+      padding: 80px 0;
+      &,
+      a {
+        color: $base;
+      }
+    }
+    &__links {
+      font-family: $font-display;
+      &,
+      ul {
+        display: flex;
+        gap: 12px;
+        flex-direction: column;
+        align-items: flex-end;
+        @include md {
+          align-items: center;
+        }
+      }
+      a {
+        display: inline-block;
+        font-weight: bold;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        transition: 0.3s;
+        position: relative;
+        &::before {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          inset: 0;
+          background-color: #fff;
+          transform: scaleX(0);
+          transform-origin: right;
+          transition: transform 0.3s;
+        }
+        &:hover {
+          color: $primary;
+          &::before {
+            transform: scaleX(1);
+            transform-origin: left;
+          }
+        }
+      }
+
+      .has_child {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        @include md {
+          align-items: center;
+        }
+      }
+      .child {
+        @include font-size(14px);
+        gap: 8px;
+      }
+    }
+    &__bg {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      &::after {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        background-image: linear-gradient(-30deg, $accent, $primary);
+        opacity: 0.7;
+      }
+    }
+    &__logo {
+      width: 100%;
+      max-width: 265px;
+      @include md {
+        margin-inline: auto;
+      }
+    }
+    &__desc {
+      display: grid;
+      gap: 20px;
+      max-width: 360px;
+      @include md {
+        max-width: unset;
+      }
+    }
+    &__copyright {
+      @include font-size(14px);
+    }
+    &__nav {
+      max-width: 360px;
+      @include md {
+        max-width: unset;
+      }
+    }
+  }
+</style>

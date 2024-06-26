@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+
+import Layout from '@/layouts/BaseLayout';
+import ListPosts from '@/components/ListPosts.astro';
+import { Container } from '@/components/index';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post) => post.data.tags.includes(tag));
+    filteredPosts.sort((a, b) => (a.data.pubDate < b.data.pubDate ? 1 : -1)); // 日付の降順
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+
+// page settings
+const title = `タグ: ${tag}`;
+const pageHeader = true;
+const breadcrumb = [
+  { label: 'タグ一覧', href: '/tags', 'aria-label': undefined },
+  { label: `タグ: ${tag}`, href: Astro.url.pathname, 'aria-label': undefined },
+];
+// page settings end
+---
+
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
+  <Container>
+    <ListPosts posts={posts} layout='single' />
+  </Container>
+</Layout>

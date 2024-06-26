@@ -1,0 +1,101 @@
+---
+/*
+階層は2まで。
+TOCのような構造にしても良いかも。
+*/
+
+interface Props {
+  class: string;
+  name?: keyof typeof paths;
+}
+
+const { class: className, name = 'main', ...rest } = Astro.props;
+
+const paths = {
+  main: [
+    {
+      label: 'Home',
+      href: '/',
+    },
+    {
+      label: 'About',
+      href: '/about/',
+    },
+    {
+      label: 'Posts',
+      href: '/posts/page/',
+      hasChildren: true,
+      children: [
+        {
+          label: 'Tags',
+          href: '/tags/',
+        },
+        {
+          label: 'Categories',
+          href: '/categories/',
+        },
+      ],
+    },
+  ],
+  footer: [
+    {
+      label: 'Home',
+      href: '/',
+    },
+    {
+      label: 'About',
+      href: '/about/',
+    },
+    {
+      label: 'Posts',
+      href: '/posts/page/',
+      hasChildren: true,
+      children: [
+        {
+          label: 'Tags',
+          href: '/tags/',
+        },
+        {
+          label: 'Categories',
+          href: '/categories/',
+        },
+      ],
+    },
+    {
+      label: 'Contact',
+      href: '/about/',
+    },
+  ],
+};
+
+const currentPaths = paths[name];
+---
+
+<ul class={className} {...rest}>
+  {
+    currentPaths.map((path) =>
+      path.hasChildren ? (
+        <li class='has_child' {...rest}>
+          <a href={path.href} {...rest}>
+            {path.label}
+          </a>
+          <ul class='child' {...rest}>
+            {path.children.map((childPath) => (
+              <li {...rest}>
+                <a href={childPath.href} {...rest}>
+                  {childPath.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ) : (
+        <li {...rest}>
+          <a href={path.href} {...rest}>
+            {path.label}
+          </a>
+        </li>
+      )
+    )
+  }
+</ul>

@@ -1,0 +1,128 @@
+---
+const { page } = Astro.props;
+
+const basePathName = Astro.url.href.replace(/\/.?$/, '/');
+---
+
+<div class='pagination'>
+  <ul class='pagination__list'>
+    {
+      page.url.prev && (
+        <li>
+          <a class='prev' href={page.url.prev} />
+        </li>
+      )
+    }
+
+    {
+      page.currentPage - 2 > 0 && (
+        <li>
+          <a href={`${basePathName}${page.currentPage - 2}`}>{page.currentPage - 2}</a>
+        </li>
+      )
+    }
+    {
+      page.currentPage - 1 > 0 && (
+        <li>
+          <a href={`${basePathName}${page.currentPage - 1}`}>{page.currentPage - 1}</a>
+        </li>
+      )
+    }
+
+    <li>
+      <span class='current'>{page.currentPage}</span>
+    </li>
+
+    {
+      page.lastPage >= page.currentPage + 1 && (
+        <li>
+          <a href={`${basePathName}${page.currentPage + 1}`}>{page.currentPage + 1}</a>
+        </li>
+      )
+    }
+
+    {
+      page.lastPage >= page.currentPage + 2 && (
+        <li>
+          <a href={`${basePathName}${page.currentPage + 2}`}>{page.currentPage + 2}</a>
+        </li>
+      )
+    }
+    {
+      page.url.next && (
+        <li>
+          <a class='next' href={page.url.next} />
+        </li>
+      )
+    }
+  </ul>
+</div>
+
+<style lang='scss'>
+  @use '/src/scss/variables/_index' as *;
+  @use '/src/scss/base/_index' as *;
+
+  .pagination {
+    &__list {
+      word-break: keep-all;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      list-style: none;
+      padding: 0;
+      gap: 40px;
+    }
+    a,
+    span {
+      position: relative;
+      color: $text;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      height: 24px;
+      padding: 0 4px 4px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: $accent;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s;
+      }
+
+      &.current,
+      &:hover {
+        &::before {
+          transform: scaleX(1);
+          transform-origin: left;
+        }
+      }
+    }
+  }
+  .prev,
+  .next {
+    &::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      vertical-align: bottom;
+      background-color: currentColor;
+      mask-size: contain;
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA3IDEyIj4KICA8cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0uNTQ0NTgxLjcwNTM4NEMuMTU1MzA5IDEuMDk0NjYuMTU0OTY1IDEuNzI1NjkuNTQzODEzIDIuMTE1MzhMNC40MTk5NyA2IC41NDM4MTIgOS44ODQ2MmMtLjM4ODg0Ny4zODk2OC0uMzg4NTAzIDEuMDIwNjguMDAwNzY5IDEuNDA5OTguMzg5NTczLjM4OTYgMS4wMjExOTkuMzg5NiAxLjQxMDc2OSAwbDQuNDY3MDMtNC40NjcwMWMuNDU3MDYtLjQ1NzA3LjQ1NzA2LTEuMTk4MTEgMC0xLjY1NTE4TDEuOTU1MzUuNzA1Mzg0QzEuNTY1NzguMzE1ODExLjkzNDE1NC4zMTU4MTEuNTQ0NTgxLjcwNTM4NFoiLz4KPC9zdmc+');
+    }
+  }
+  .prev {
+    &::after {
+      transform: scale(-1, 1);
+    }
+  }
+</style>

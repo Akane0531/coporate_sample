@@ -1,0 +1,139 @@
+@use '../variables/_index' as *;
+@use '../base/_index' as *;
+@use '../modules/_rfs' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: $base;
+  color: $text;
+  font-family: $font-body;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  line-height: 1.8;
+  margin: 0;
+  min-width: $lg;
+  overflow-wrap: break-word;
+  position: relative;
+  word-break: break-word;
+  word-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+  -webkit-tap-highlight-color: transparent;
+
+  @include md {
+    text-align: unset;
+    min-width: unset;
+  }
+}
+
+img,
+video {
+  height: auto;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+iframe,
+object,
+embed {
+  max-width: 100%;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+hr {
+  border-color: $line;
+}
+
+a {
+  &[href^='tel:'] {
+    @include smmin {
+      pointer-events: none;
+    }
+  }
+
+  // &:any-link {
+  //   color: $text;
+  // }
+}
+
+a[class=''],
+a:not([class]):not(:has(*)) {
+  color: $text;
+  text-decoration: none;
+
+  &[target='_blank']::after {
+    content: '';
+    margin-left: 8px;
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    background-color: currentColor;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA0My44Ij4KICA8cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMi41IDB2MTIuNUgwdjMxLjNoMzcuNVYzMS4zSDUwVjBIMTIuNVptMjEuOSA0MC42SDN2LTI1aDkuNHYxNS42aDIxLjl2OS40Wm0xMi41LTEyLjVIMTUuNnYtMjVINDd2MjVaIi8+Cjwvc3ZnPg==');
+  }
+  &:hover {
+    color: $accent;
+  }
+
+  // &:visited {
+  //   color: shade-color($text, 20%);
+  // }
+}
+
+::-webkit-scrollbar {
+  background-color: transparent;
+  height: 0.6em;
+  width: 0.6em;
+}
+::-webkit-scrollbar-track {
+  background-color: tint-color(#000, 60%);
+}
+::-webkit-scrollbar-thumb {
+  background-color: tint-color(#000, 10%);
+  border-radius: 0.6em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+}
+
+h1 {
+  @include font-size(40px);
+}
+h2 {
+  @include font-size(32px);
+}
+
+h3 {
+  @include font-size(24px);
+}
+
+h4 {
+  @include font-size(20px);
+}
+
+h5 {
+  @include font-size(18px);
+}
+
+h6 {
+  @include font-size(16px);
+}

@@ -10,8 +10,32 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.8.3",
     "@astrojs/check": "^0.7.0",
+    "@astrojs/preact": "3.3.0",
+    "@astrojs/rss": "^4.0.6",
+    "@fontsource-variable/noto-sans-jp": "^5.0.19",
+    "@splidejs/splide": "^4.1.4",
+    "astro": "^4.8.3",
+    "motion": "^10.18.0",
+    "normalize.css": "^8.0.1",
+    "preact": "10.22.0",
     "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@astrojs/react": "^3.3.4",
+    "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/ts-plugin": "^1.8.0",
+    "@fontsource/lato": "^5.0.21",
+    "@tailwindcss/typography": "^0.5.13",
+    "@types/node": "^20.12.12",
+    "astro-imagetools": "^0.9.0",
+    "marked": "^13.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rfs": "^10.0.0",
+    "sass": "^1.77.2",
+    "slugify": "^1.6.6",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss": "3.4.3"
   }
 }

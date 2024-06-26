@@ -1,0 +1,107 @@
+---
+import BaseHead from '@/components/BaseHead.astro';
+import { Container, Breadcrumbs } from '@/components/index';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import TwSizeIndicator from '@/components/TwSizeIndicator.astro';
+
+const { title, slug = [], pageHeader = true, breadcrumb, description, image, articleDate } = Astro.props;
+
+const pathnames = Astro.url.pathname.replace(/^\/|\/$/g, '').split('/');
+const bodyClass = [...slug, ...pathnames].filter(Boolean).join(' ');
+---
+
+<!doctype html>
+<html lang='ja'>
+  <head>
+    <BaseHead title={title} slug={slug} description={description} ogImage={image} articleDate={articleDate} />
+    <slot name='head' />
+  </head>
+  <body class={bodyClass}>
+    <div class='contents'>
+      <!-- //TODO 各役割のslotを入れ、コンポーネントのタグを見直し -->
+
+      <slot name='navbar'>
+        <Header />
+      </slot>
+
+      <slot name='header'>
+        {
+          pageHeader && (
+            <header class='grid gap-y-4 mb-20 lg:mb-32'>
+              <PageHeader title={title} />
+
+              {breadcrumb && (
+                <Container size='xl'>
+                  <Breadcrumbs paths={breadcrumb} />
+                </Container>
+              )}
+            </header>
+          )
+        }
+      </slot>
+
+      {
+        // サイドバーなし
+        !Astro.slots.sidebar && (
+          <main>
+            <slot />
+          </main>
+        )
+      }
+
+      {
+        // サイドバーあり
+        Astro.slots.sidebar && (
+          <main>
+            <Container class='sidebar'>
+              <slot />
+              <aside>
+                <slot name='sidebar' />
+              </aside>
+            </Container>
+          </main>
+        )
+      }
+
+      <slot name='footer'>
+        <Footer />
+      </slot>
+    </div>
+
+    <slot name='modal' />
+
+    <TwSizeIndicator />
+
+    <style lang='scss'>
+      @use '/src/scss/variables/_index' as *;
+      @use '/src/scss/base/_index' as *;
+      @use '/src/scss/modules/_rfs' as *;
+
+      .contents {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .sidebar {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        @include md {
+          flex-direction: column;
+        }
+        
+        aside {
+          width: 100%;
+          max-width: 320px;
+          @include md {
+            max-width: unset;
+          }
+        }
+      }
+    </style>
+  </body>
+</html>
