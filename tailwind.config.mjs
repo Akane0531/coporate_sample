@@ -27,7 +27,7 @@ export default {
       },
     },
     fontFamily: {
-      display: ['Lato', 'sans-serif'],
+      display: ['Lato', 'Noto Sans JP Variable', 'sans-serif'],
       body: ['Noto Sans JP Variable', 'sans-serif'],
     },
   },
