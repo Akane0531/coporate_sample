@@ -27,7 +27,7 @@ import Button from '@/components/Button.astro';
 
 <div class='global_nav__sp_menu block lg:hidden'>
   <nav class='global_nav__menu_inner'>
-    <Navigation class='global_nav__link global_nav__link--sp' />
+    <Navigation class='global_nav__link global_nav__link--sp' name='footer' />
   </nav>
 </div>
 
@@ -46,6 +46,12 @@ import Button from '@/components/Button.astro';
       &,
       a {
         color: $base;
+      }
+    }
+
+    &.is_active.is_white {
+      .global_nav__hamburger {
+        color: $text;
       }
     }
 
@@ -122,8 +128,19 @@ import Button from '@/components/Button.astro';
       }
       &--sp {
         flex-direction: column;
+        .has_child,
+        .child {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .child {
+          @include font-size(14px);
+        }
       }
     }
+
     &__hamburger {
       width: 32px;
       height: 16px;

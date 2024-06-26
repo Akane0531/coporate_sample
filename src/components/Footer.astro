@@ -97,6 +97,9 @@ import Logo from '@/components/Logo.astro';
         flex-direction: column;
         align-items: flex-end;
         gap: 8px;
+        @include md {
+          align-items: center;
+        }
       }
       .child {
         @include font-size(14px);
