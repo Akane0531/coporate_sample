@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import { getCategories } from '@/utils';
+
+import Layout from '@/layouts/BaseLayout';
+import { Container } from '@/components/index';
+import Chip from '@/components/Chip.astro';
+
+// page settings
+const title = 'カテゴリー一覧';
+const pageHeader = true;
+const breadcrumb = [{ label: 'カテゴリー一覧', href: '/caetegories', 'aria-label': undefined }];
+// page settings end
+
+const categories = await getCategories();
+---
+
+<Layout title={title} pageHeader={pageHeader} breadcrumb={breadcrumb}>
+  <Container size='md'>
+    <ul class='tags flex flex-wrap gap-y-4 gap-x-2'>
+      {
+        categories.map(({ name, count }) => (
+          <li class='inline-block'>
+            <a href={`/categories/${name}`}>
+              {' '}
+              <Chip label={name}>
+                <span class='tags__count'>{count}</span>
+              </Chip>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Layout>
+
+<style lang='scss'>
+  .tags {
+    &__count {
+      background-color: rgba(#fff, 0.2);
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin: 0 0 0 0.5em;
+      line-height: 1;
+    }
+  }
+</style>
