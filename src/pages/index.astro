@@ -7,6 +7,7 @@ import { Container } from '@/components/index';
 import Heading from '@/components/Heading.astro';
 import ListPosts from '@/components/ListPosts.astro';
 import Button from '@/components/Button.astro';
+import Chip from '@/components/Chip.astro';
 
 // page settings
 
@@ -161,9 +162,9 @@ const contact = [
                       <Img src={item.data.image.url} alt={item.data.image.alt} layout='fill' width={160} height={160} />
                     </div>
                     <div class='recommend__card_title'>
-                      {item.data.tags.map((tag) => {
-                        <div class='recommend__label'>{tag}</div>;
-                      })}
+                      {item.data.tags.map((tag) => (
+                        <Chip size='small' label={tag} />
+                      ))}
                       <h3>{item.data.title}</h3>
                     </div>
                   </header>
