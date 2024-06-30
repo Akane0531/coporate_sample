@@ -1,7 +1,8 @@
 ---
 title: 私の3番目のブログ記事
-author: Astro学習者
+pubDate: 2022-07-01
 description: '上手くいかないことがありましたが、コミュニティに質問して助けてもらいました！'
+author: Astro学習者
 image:
   url: 'https://docs.astro.build/assets/rays.webp'
   alt: 'Astroの光線のサムネイル。'

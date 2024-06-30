@@ -1,7 +1,8 @@
 ---
 title: 私の2番目のブログ記事
-author: Astro学習者
+pubDate: 2022-07-01
 description: 'Astroを少し学んだら、止まらなくなりました！'
+author: Astro学習者
 image:
   url: 'https://docs.astro.build/assets/arc.webp'
   alt: 'Astroのアークのサムネイル。'
